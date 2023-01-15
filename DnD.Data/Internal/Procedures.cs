@@ -123,5 +123,20 @@ namespace DnD.Data.Internal
             public const string Get = "dbo.Race_Category_Get";
             public const string GetById = "dbo.Race_Category_Get_ById";
         }
+        public class User
+        {
+            public const string Get = "dbo.Users_Get";
+            public const string GetById = "dbo.User_Get_ById";
+            public const string Insert = "dbo.User_Insert";
+            public const string Update = "dbo.User_Update";
+            public const string UpdatePassword = "dbo.User_Update_Password";
+            public const string UserValidate = "dbo.User_Validate";
+            public const string CheckEmail = "dbo.User_Check_Email";
+            public const string GetByEmail = "dbo.User_Get_ByEmail";
+        }
+        public class UserRole
+        {
+            public const string Get = "dbo.User_Role_Get";
+        }
     }
 }

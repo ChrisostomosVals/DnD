@@ -21,6 +21,7 @@ namespace DnD.Api.Utilities
             CreateMap<Data.Models.LocationEventModel, Shared.Models.LocationEventModel>().ReverseMap();
             CreateMap<Data.Models.RaceModel, Shared.Models.RaceModel>().ReverseMap();
             CreateMap<Data.Models.RaceCategoryModel, Shared.Models.RaceCategoryModel>().ReverseMap();
+            CreateMap<Data.Models.UserModel, Shared.Models.UserModel>().ReverseMap();
         }
     }
 }

@@ -1,11 +1,12 @@
 using DataAdapter.Sql;
 using DnD.Data.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,30 +29,52 @@ builder.Services.AddTransient<LocationRepository>();
 builder.Services.AddTransient<LocationEventRepository>();
 builder.Services.AddTransient<RaceRepository>();
 builder.Services.AddTransient<RaceCategoryRepository>();
+builder.Services.AddTransient<UserRepository>();
+builder.Services.AddTransient<UserRoleRepository>();
+
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
+    {
+        config.Authority = "https://localhost:6000";
+        config.RequireHttpsMetadata = false;
+        config.TokenValidationParameters.ValidateActor = false;
+        config.TokenValidationParameters.ValidateAudience = false;
+        config.TokenValidationParameters.ValidateIssuer = false;
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Description = "ApiKey must appear in header",
-        Type = SecuritySchemeType.ApiKey,
-        Name = "ApiKey",
-        In = ParameterLocation.Header,
-        Scheme = "ApiKeyScheme"
+        Title = "jwt_Auth_Api",
+        Version = "v1",
     });
-    var key = new OpenApiSecurityScheme()
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Reference = new OpenApiReference
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        In = ParameterLocation.Header,
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            Type = ReferenceType.SecurityScheme,
-            Id = "ApiKey"
+        new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                 Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
         },
-        In = ParameterLocation.Header
-    };
-    var requirement = new OpenApiSecurityRequirement
-                    {
-                             { key, new List<string>() }
-                    };
-    options.AddSecurityRequirement(requirement);
+        new string[] { }
+        }
+    });
+    
 });
 //builder.WebHost.ConfigureKestrel(options =>
 //{
@@ -68,9 +91,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

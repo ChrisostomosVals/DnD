@@ -10,7 +10,6 @@ namespace DnD.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ApiKeyAuth]
     public class CharacterController : ControllerBase
     {
         private readonly CharacterRepository _characterRepository;
