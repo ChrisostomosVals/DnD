@@ -12,7 +12,6 @@ namespace DnD.Api.Utilities
             CreateMap<Data.Models.CharacterGearModel, Shared.Models.CharacterGearModel>().ReverseMap();
             CreateMap<Data.Models.CharacterArsenalModel, Shared.Models.CharacterArsenalModel>().ReverseMap();
             CreateMap<Data.Models.CharacterSkillModel, Shared.Models.CharacterSkillModel>().ReverseMap();
-            CreateMap<Data.Models.CharacterMainStatsModel, Shared.Models.CharacterMainStatsModel>().ReverseMap();
             CreateMap<Data.Models.SkillModel, Shared.Models.SkillModel>().ReverseMap();
             CreateMap<Data.Models.WorldMiscModel, Shared.Models.WorldMiscModel>().ReverseMap();
             CreateMap<Data.Models.WorldObjectModel, Shared.Models.WorldObjectModel>().ReverseMap();

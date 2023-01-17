@@ -1,0 +1,43 @@
+﻿{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:4001"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/api/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/{any}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7270
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/{any}/{id}",
+      "UpstreamHttpMethod": [ "Get", "Delete" ],
+      "DownstreamPathTemplate": "/api/{any}/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7270
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/connect",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/connect/token",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 6000
+        }
+      ]
+    }
+  ]
+}

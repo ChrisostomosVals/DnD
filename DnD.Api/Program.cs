@@ -16,7 +16,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddSingleton<SqlAdapter>(new SqlAdapter(builder.Configuration.GetConnectionString("Connectionstring"), "MSSQL"));
 builder.Services.AddTransient<CharacterArsenalRepository>();
 builder.Services.AddTransient<CharacterGearRepository>();
-builder.Services.AddTransient<CharacterMainStatsRepository>();
 builder.Services.AddTransient<CharacterRepository>();
 builder.Services.AddTransient<CharacterSkillRepository>();
 builder.Services.AddTransient<SkillRepository>();

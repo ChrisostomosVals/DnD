@@ -57,15 +57,11 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "GAME MASTER")]
         public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
         {
             try
             {
-                if (!User.IsInRole("GAME MASTER"))
-                {
-                    var loggedInUser = User.GetSubjectId();
-                    id = loggedInUser;
-                }
                 var user = await _userRepository.GetByIdAsync(id, cancellationToken);
                 if (user is null) return NotFound("User not Found");
 
@@ -81,8 +77,27 @@ namespace DnD.Api.Controllers
             }
         }
 
+        [HttpGet("profile")]
+        public async Task<IActionResult> Profile(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                if (user is null) return NotFound("User not Found");
 
+                var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
+                var responseRepo = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                var response = _mapper.Map<Shared.Models.UserModel>(responseRepo);
+                response.ROLE = userRole.ROLE;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPost]
+        [Authorize(Roles = "GAME MASTER")]
         public async Task<IActionResult> Insert(InsertUserRequestModel request, CancellationToken cancellationToken)
         {
             try

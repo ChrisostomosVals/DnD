@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using DnD.Api.CustomAttributes;
 using DnD.Data.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DnD.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ApiKeyAuth]
+    [Authorize]
     public class SkillController : ControllerBase
     {
         private readonly SkillRepository _skillRepository;

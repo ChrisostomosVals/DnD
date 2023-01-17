@@ -2,13 +2,14 @@
 using DnD.Api.CustomAttributes;
 using DnD.Data.Repositories;
 using DnD.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DnD.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ApiKeyAuth]
+    [Authorize]
     public class LocationEventController : ControllerBase
     {
         private readonly LocationEventRepository _locationEventRepository;
