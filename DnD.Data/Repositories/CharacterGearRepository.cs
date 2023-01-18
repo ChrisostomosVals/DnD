@@ -33,7 +33,7 @@ namespace DnD.Data.Repositories
            new { characterId },
            cancellationToken);
 
-        public async Task InsertItem(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
+        public async Task InsertItemAsync(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
             Procedures.Characters.Gear.InsertItem,
             new 
             {
@@ -43,7 +43,7 @@ namespace DnD.Data.Repositories
                 weight = characterGeatModel.WEIGHT
             },
             cancellationToken);
-        public async Task UpdateItem(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
+        public async Task UpdateItemAsync(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
            Procedures.Characters.Gear.UpdateItem,
            new {
                id = characterGeatModel.ID, 
@@ -52,11 +52,22 @@ namespace DnD.Data.Repositories
                weight = characterGeatModel.WEIGHT
            },
            cancellationToken);
-        public async Task UpdateQuantity(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
+        public async Task TransferItemAsync(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
+          Procedures.Characters.Gear.TransferItem,
+          new
+          {
+              id = characterGeatModel.ID,
+              characterId = characterGeatModel.CHARACTER_ID,
+              name = characterGeatModel.NAME,
+              quantity = characterGeatModel.QUANTITY,
+              weight = characterGeatModel.WEIGHT
+          },
+          cancellationToken);
+        public async Task UpdateQuantityAsync(CharacterGearModel characterGeatModel, CancellationToken cancellationToken) => await _adapter.SaveAsync(
            Procedures.Characters.Gear.UpdateQuantity,
            new { id = characterGeatModel.ID, quantity = characterGeatModel.QUANTITY },
            cancellationToken);
-        public async Task DeleteItem(int id, CancellationToken cancellationToken) => await _adapter.SaveAsync(
+        public async Task DeleteItemAsync(int id, CancellationToken cancellationToken) => await _adapter.SaveAsync(
            Procedures.Characters.Gear.DeleteItem,
            new { id },
            cancellationToken);

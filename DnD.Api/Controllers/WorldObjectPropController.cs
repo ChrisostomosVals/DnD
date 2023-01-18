@@ -12,15 +12,17 @@ namespace DnD.Api.Controllers
     [Authorize]
     public class WorldObjectPropController : ControllerBase
     {
+        private readonly WorldObjectRepository _worldObjectRepository;
         private readonly WorldObjectPropRepository _worldObjectPropRepository;
         private readonly ILogger<WorldObjectPropController> _logger;
         private readonly IMapper _mapper;
 
-        public WorldObjectPropController(WorldObjectPropRepository worldObjectPropRepository, ILogger<WorldObjectPropController> logger, IMapper mapper)
+        public WorldObjectPropController(WorldObjectPropRepository worldObjectPropRepository, ILogger<WorldObjectPropController> logger, IMapper mapper, WorldObjectRepository worldObjectRepository)
         {
             _worldObjectPropRepository = worldObjectPropRepository;
             _logger = logger;
             _mapper = mapper;
+            _worldObjectRepository = worldObjectRepository;
         }
         [HttpGet("{worldId}/all")]
         public async Task<IActionResult> Get(int worldId, CancellationToken cancellationToken)
@@ -33,7 +35,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object-prop/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -42,13 +44,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _worldObjectPropRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Property not found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object-prop/get-one", "property not found"));
                 var response = _mapper.Map<Shared.Models.WorldObjectPropModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object-prop/get-one", ex));
             }
         }
         [HttpPost]
@@ -56,6 +58,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findObject = await _worldObjectRepository.GetByIdAsync(request.WorldObjectId, cancellationToken);
+                if (findObject is null) return NotFound(ErrorResponseModel.NewError("world-object-prop/create", "object not found"));
                 var newProp = new Shared.Models.WorldObjectPropModel
                 {
                     WORLD_OBJECT_ID = request.WorldObjectId,
@@ -64,11 +68,11 @@ namespace DnD.Api.Controllers
                 };
                 var newPropMap = _mapper.Map<Data.Models.WorldObjectPropModel>(newProp);
                 await _worldObjectPropRepository.InsertAsync(newPropMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object-prop/create", ex));
             }
         }
         [HttpPut]
@@ -77,7 +81,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _worldObjectPropRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (responseRepo is null) return NotFound("Property not found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object-prop/update", "object property not found"));
                 var newProp = new Shared.Models.WorldObjectPropModel
                 {
                     ID = request.Id,
@@ -86,11 +90,11 @@ namespace DnD.Api.Controllers
                 };
                 var newPropMap = _mapper.Map<Data.Models.WorldObjectPropModel>(newProp);
                 await _worldObjectPropRepository.UpdateAsync(newPropMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object-prop/update", ex));
             }
         }
         [HttpDelete("{id}/delete")]
@@ -99,13 +103,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _worldObjectPropRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Property not found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object-prop/delete", "object property not found"));
                 await _worldObjectPropRepository.DeleteAsync(id, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object-prop/delete", ex));
             }
         }
     }

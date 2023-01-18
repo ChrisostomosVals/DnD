@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DnD.Api.CustomAttributes;
 using DnD.Data.Repositories;
+using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("class-category/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -40,12 +41,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _classCategoryRepository.GetByIdAsync(id, cancellationToken);
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("class-category/get-one", "category not found"));
                 var response = _mapper.Map<Shared.Models.ClassCategoryModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("class-category/get-one", ex));
             }
         }
     }

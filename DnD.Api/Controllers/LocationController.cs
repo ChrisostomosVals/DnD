@@ -30,10 +30,11 @@ namespace DnD.Api.Controllers
                 if (latest)
                 {
                     var responseRepo = await _locationRepository.GetLatestAsync(cancellationToken);
+                    if (responseRepo == null) return NotFound(ErrorResponseModel.NewError("location/get-latest", "location not found"));
                     var response = _mapper.Map<Shared.Models.LocationModel>(responseRepo);
                     return Ok(response);
                 }
-                else
+               else
                 {
                     var responseRepo = await _locationRepository.GetAsync(cancellationToken);
                     var response = _mapper.Map<IEnumerable<Shared.Models.LocationModel>>(responseRepo);
@@ -42,7 +43,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -52,13 +53,13 @@ namespace DnD.Api.Controllers
             {
 
                 var responseRepo = await _locationRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Invalid location: Location not found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("location/get-one", "location not found"));
                 var response = _mapper.Map<Shared.Models.LocationModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location/get-one", ex));
             }
         }
         [HttpPost]
@@ -77,11 +78,11 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationMap = _mapper.Map<Data.Models.LocationModel>(newLocation);
                 await _locationRepository.InsertAsync(newLocationMap, cancellationToken); 
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location/create", ex));
             }
         }
         [HttpPut]
@@ -89,6 +90,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findLocation = await _locationRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findLocation is null) return NotFound(ErrorResponseModel.NewError("location/update", "location not found"));
                 var newLocation = new Shared.Models.LocationModel
                 {
                     ID = request.Id,
@@ -101,11 +104,11 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationMap = _mapper.Map<Data.Models.LocationModel>(newLocation);
                 await _locationRepository.UpdateAsync(newLocationMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location/update", ex));
             }
         }
         [HttpDelete("{id}/delete")]
@@ -115,13 +118,13 @@ namespace DnD.Api.Controllers
             {
 
                 var responseRepo = await _locationRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Invalid location: Location not found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("location/delete", "location not found"));
                 await _locationRepository.DeleteAsync(id, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location/delete", ex));
             }
         }
     }

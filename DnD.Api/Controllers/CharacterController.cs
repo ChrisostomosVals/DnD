@@ -48,7 +48,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -57,7 +57,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _characterRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Character not Found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("character/get-one", "character not found"));
                 var response = _mapper.Map<Shared.Models.CharacterModel>(responseRepo);
                 var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
                 var scheme = response.Scheme;
@@ -107,7 +107,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character/get-one", ex));
             }
         }
         [HttpPost]
@@ -163,7 +163,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character/create", ex));
             }
         }
         [HttpPut]
@@ -172,12 +172,12 @@ namespace DnD.Api.Controllers
             try
             {
                 var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findCharacter is null) return NotFound("Character not Found");
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/update", "character not found"));
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var loggedInUser = User.GetSubjectId();
                     var user = await _userRepository.GetByIdAsync(loggedInUser, cancellationToken);
-                    if (request.Id != user.CHARACTER_ID) return Unauthorized("You do not have permission for this action");
+                    if (request.Id != user.CHARACTER_ID) return Unauthorized(ErrorResponseModel.NewError("character/update", "You do not have permission for this action"));
                     request.Scheme = findCharacter.SCHEME switch
                     {
                         _ => null,
@@ -230,7 +230,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character/update", ex));
             }
         }
         [Authorize(Roles = "GAME MASTER")]
@@ -240,13 +240,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
-                if (findCharacter is null) return NotFound("Character not Found");
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/delete", "character not found"));
                 await _characterRepository.DeleteAsync(id, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character/delete", ex));
             }
         }
     }

@@ -12,15 +12,17 @@ namespace DnD.Api.Controllers
     [Authorize]
     public class WorldMiscController : ControllerBase
     {
+        private readonly WorldObjectRepository _worldObjectRepository;
         private readonly WorldMiscRepository _worldMiscRepository;
         private readonly ILogger<WorldMiscController> _logger;
         private readonly IMapper _mapper;
 
-        public WorldMiscController(WorldMiscRepository worldMiscRepository, ILogger<WorldMiscController> logger, IMapper mapper)
+        public WorldMiscController(WorldMiscRepository worldMiscRepository, ILogger<WorldMiscController> logger, IMapper mapper, WorldObjectRepository worldObjectRepository)
         {
             _worldMiscRepository = worldMiscRepository;
             _logger = logger;
             _mapper = mapper;
+            _worldObjectRepository = worldObjectRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
@@ -33,7 +35,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-miscellanious/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -42,13 +44,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _worldMiscRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Item not Found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-miscellanious/get-one", "item not found"));
                 var response = _mapper.Map<Shared.Models.WorldMiscModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-miscellanious/get-one", ex));
             }
         }
         [HttpGet("{dependId}/depend")]
@@ -57,13 +59,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _worldMiscRepository.GetByDependIdAsync(dependId, cancellationToken);
-                if (responseRepo.Count().Equals(0)) return NotFound("Request yielded no results");
+                if (responseRepo.Count() is 0) return NotFound(ErrorResponseModel.NewError("world-miscellanious/get-depended-items", "items not found"));
                 var response = _mapper.Map<IEnumerable<Shared.Models.WorldMiscModel>>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-miscellanious/get-depended-items", ex));
             }
         }
         [HttpPost]
@@ -80,11 +82,11 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldMiscModel>(newItem);
                 await _worldMiscRepository.InsertAsync(newItemMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-miscellanious/get-depended-items", ex));
             }
         }
         [HttpPut]
@@ -92,6 +94,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findItem = await _worldMiscRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findItem is null) return NotFound(ErrorResponseModel.NewError("world-miscellanious/update", "item not found"));
                 var newItem = new Shared.Models.WorldMiscModel
                 {
                     ID = request.Id,
@@ -100,11 +104,11 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldMiscModel>(newItem);
                 await _worldMiscRepository.UpdateAsync(newItemMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-miscellanious/update", ex));
             }
         }
     }

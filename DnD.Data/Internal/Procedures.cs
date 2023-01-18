@@ -25,6 +25,7 @@ namespace DnD.Data.Internal
                 public const string GetMoney = "dbo.Character_Money_Get";
                 public const string InsertItem = "dbo.Character_Insert_Gear";
                 public const string UpdateItem = "dbo.Character_Update_Gear_Item";
+                public const string TransferItem = "dbo.Character_Gear_Transfer";
                 public const string UpdateQuantity = "dbo.Character_Update_Gear_Quantity";
                 public const string DeleteItem = "dbo.Character_Delete_Geat_Item";
             }

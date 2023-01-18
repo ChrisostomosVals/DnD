@@ -13,14 +13,16 @@ namespace DnD.Api.Controllers
     [Authorize]
     public class CharacterGearController : ControllerBase
     {
+        private readonly CharacterRepository _characterRepository;
         private readonly CharacterGearRepository _characterGearRepository;
         private readonly ILogger<CharacterGearController> _logger;
         private readonly IMapper _mapper;
-        public CharacterGearController(CharacterGearRepository characterGearRepository, ILogger<CharacterGearController> logger, IMapper mapper)
+        public CharacterGearController(CharacterGearRepository characterGearRepository, ILogger<CharacterGearController> logger, IMapper mapper, CharacterRepository characterRepository)
         {
             _characterGearRepository = characterGearRepository;
             _logger = logger;
             _mapper = mapper;
+            _characterRepository = characterRepository;
         }
         [HttpGet("{characterId}/all")]
         public async Task<IActionResult> Get(string characterId, CancellationToken cancellationToken)
@@ -33,7 +35,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-gear/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -42,12 +44,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _characterGearRepository.GetByIdAsync(id, cancellationToken);
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("character-gear/get-one", "gear not found"));
                 var response = _mapper.Map<Shared.Models.CharacterGearModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-gear/get-one", ex));
             }
         }
         [HttpGet("{characterId}/money")]
@@ -56,12 +59,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _characterGearRepository.GetMoneyByCharacterIdAsync(characterId, cancellationToken);
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("character-gear/get-money", "money not found"));
                 var response = _mapper.Map<Shared.Models.CharacterGearModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-gear/get-money", ex));
             }
         }
         [HttpPost]
@@ -69,6 +73,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.CharacterId, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character-gear/insert", "character not found"));
                 var newGear = new Shared.Models.CharacterGearModel
                 {
                     CHARACTER_ID = request.CharacterId,
@@ -77,12 +83,12 @@ namespace DnD.Api.Controllers
                     WEIGHT = request.Weight
                 };
                 var newGearMapped = _mapper.Map<Data.Models.CharacterGearModel>(newGear);
-                await _characterGearRepository.InsertItem(newGearMapped, cancellationToken);
+                await _characterGearRepository.InsertItemAsync(newGearMapped, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-gear/insert", ex));
             }
         }
         [HttpPut]
@@ -91,7 +97,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var findGear = await _characterGearRepository.GetByIdAsync(request.Id, cancellationToken);
-                if(findGear is null) return NotFound("Gear item does not exist");
+                if(findGear is null) return NotFound(ErrorResponseModel.NewError("character-gear/update", "gear not found"));
                 var newGear = new Shared.Models.CharacterGearModel
                 {
                     ID = request.Id,
@@ -100,12 +106,39 @@ namespace DnD.Api.Controllers
                     WEIGHT = request.Weight
                 };
                 var newGearMapped = _mapper.Map<Data.Models.CharacterGearModel>(newGear);
-                await _characterGearRepository.UpdateItem(newGearMapped, cancellationToken);
+                await _characterGearRepository.UpdateItemAsync(newGearMapped, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-gear/update", ex));
+            }
+        }
+        [HttpPut("transfer")]
+        public async Task<IActionResult> TransferItem(TransferGearItemRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findGear = await _characterGearRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findGear is null) return NotFound(ErrorResponseModel.NewError("character-gear/transfer", "gear not found"));
+                var findCharacter = await _characterRepository.GetByIdAsync(request.CharacterId, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character-gear/transfer", "character not found"));
+                var transferGear = new Shared.Models.CharacterGearModel
+                {
+                    ID = request.Id,
+                    CHARACTER_ID = request.CharacterId,
+                    NAME = request.Name,
+                    QUANTITY = request.Quantity,
+                    WEIGHT = request.Weight
+                };
+                var newGearMapped = _mapper.Map<Data.Models.CharacterGearModel>(transferGear);
+                await _characterGearRepository.TransferItemAsync(newGearMapped, cancellationToken);
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character-gear/update", ex));
             }
         }
         [HttpDelete("{id}/delete")]
@@ -113,12 +146,14 @@ namespace DnD.Api.Controllers
         {
             try
             {
-                await _characterGearRepository.DeleteItem(id, cancellationToken);
+                var findGear = await _characterGearRepository.GetByIdAsync(id, cancellationToken);
+                if (findGear is null) return NotFound(ErrorResponseModel.NewError("character-gear/delete", "gear not found"));
+                await _characterGearRepository.DeleteItemAsync(id, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-gear/delete", ex));
             }
         }
     }

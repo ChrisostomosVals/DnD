@@ -30,14 +30,14 @@ namespace DnD.Api.Controllers
             try
             {
                 var location = await _locationRepository.GetByIdAsync(locationId, cancellationToken);
-                if (location is null) return NotFound("Location Not Found");
+                if (location is null) return NotFound(ErrorResponseModel.NewError("location-event/get", "location not found"));
                 var responseRepo = await _locationEventRepository.GetAsync(locationId, cancellationToken);
                 var response = _mapper.Map<IEnumerable<Shared.Models.LocationEventModel>>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location-event/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -46,13 +46,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _locationEventRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Event Not Found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("location-event/get-one", "location not found"));
                 var response = _mapper.Map<Shared.Models.LocationEventModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location-event/get-one", ex));
             }
         }
         [HttpPost]
@@ -60,6 +60,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findLocation = await _locationEventRepository.GetByIdAsync(request.LocationId, cancellationToken);
+                if (findLocation is null) return NotFound(ErrorResponseModel.NewError("location-event/create", "location not found"));
                 var newLocationEvent = new Shared.Models.LocationEventModel
                 {
                     LOCATION_ID = request.LocationId,
@@ -67,11 +69,11 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationEventMap = _mapper.Map<Data.Models.LocationEventModel>(newLocationEvent);
                 await _locationEventRepository.CreateAsync(newLocationEventMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location-event/create", ex));
             }
         }
         [HttpPut]
@@ -79,6 +81,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findLocation = await _locationEventRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findLocation is null) return NotFound(ErrorResponseModel.NewError("location-event/update", "location event not found"));
                 var newLocationEvent = new Shared.Models.LocationEventModel
                 {
                     ID = request.Id,
@@ -86,11 +90,11 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationEventMap = _mapper.Map<Data.Models.LocationEventModel>(newLocationEvent);
                 await _locationEventRepository.UpdateAsync(newLocationEventMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location-event/update", ex));
             }
         }
         [HttpDelete("{id}/delete")]
@@ -99,13 +103,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _locationEventRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Event Not Found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("location-event/delete", "location event not found"));
                 await _locationEventRepository.DeleteAsync(id, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("location-event/delete", ex));
             }
         }
     }

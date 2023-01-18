@@ -18,12 +18,13 @@ namespace DnD.Api.Controllers
         private readonly ILogger<CharacterArsenalController> _logger;
         private readonly IMapper _mapper;
 
-        public CharacterArsenalController(CharacterArsenalRepository characterMainStatsRepository, CharacterGearRepository characterGearRepository, ILogger<CharacterArsenalController> logger, IMapper mapper)
+        public CharacterArsenalController(CharacterArsenalRepository characterMainStatsRepository, CharacterGearRepository characterGearRepository, ILogger<CharacterArsenalController> logger, IMapper mapper, CharacterRepository characterRepository)
         {
             _characterArsenalRepository = characterMainStatsRepository;
             _characterGearRepository = characterGearRepository;
             _logger = logger;
             _mapper = mapper;
+            _characterRepository = characterRepository;
         }
         [HttpGet("{characterId}/all")]
         public async Task<IActionResult> Get(string characterId, CancellationToken cancellationToken)

@@ -32,7 +32,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -41,29 +41,16 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _worldObjectRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound();
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object/get-one", "object not found"));
                 var response = _mapper.Map<Shared.Models.WorldObjectModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object/get-one", ex));
             }
         }
-        [HttpGet("map")]
-        public async Task<IActionResult> GetMap(CancellationToken cancellationToken)
-        {
-            try
-            {
-                var responseRepo = await _worldObjectRepository.GetMapAsync(cancellationToken);
-                var response = _mapper.Map<Shared.Models.WorldObjectModel>(responseRepo);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateWorldObjectRequestModel request, CancellationToken cancellationToken)
         {
@@ -77,11 +64,11 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldObjectModel>(newItem);
                 await _worldObjectRepository.CreateAsync(newItemMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object/create", ex));
             }
         }
         [HttpPut]
@@ -90,7 +77,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var findItem = await _worldObjectRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findItem is null) return NotFound("Item does not exist");
+                if (findItem is null) return NotFound(ErrorResponseModel.NewError("world-object/update", "Item not found"));
                 var newItem = new Shared.Models.WorldObjectModel
                 {
                     ID = request.Id,
@@ -100,11 +87,11 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldObjectModel>(newItem);
                 await _worldObjectRepository.Update(newItemMap, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object/update", ex));
             }
         }
         [HttpDelete("{id}/delete")]
@@ -113,13 +100,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var findItem = await _worldObjectRepository.GetByIdAsync(id, cancellationToken);
-                if (findItem is null) return NotFound("Item does not exist");
+                if (findItem is null) return NotFound(ErrorResponseModel.NewError("world-object/delete", "Item not found"));
                 await _worldObjectRepository.Delete(id, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("world-object/delete", ex));
             }
         }
     }

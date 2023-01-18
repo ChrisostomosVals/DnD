@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DnD.Api.CustomAttributes;
 using DnD.Data.Repositories;
+using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("skill/get", ex));
             }
         }
         [HttpGet("{id}")]
@@ -40,13 +41,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _skillRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound("Skill Not Found");
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("skill/get-one", "skill not found"));
                 var response = _mapper.Map<Shared.Models.SkillModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("skill/get-one", ex));
             }
         }
     }
