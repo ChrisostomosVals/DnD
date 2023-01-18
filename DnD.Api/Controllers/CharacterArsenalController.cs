@@ -12,6 +12,7 @@ namespace DnD.Api.Controllers
     [Authorize]
     public class CharacterArsenalController : ControllerBase
     {
+        private readonly CharacterRepository _characterRepository;
         private readonly CharacterArsenalRepository _characterArsenalRepository;
         private readonly CharacterGearRepository _characterGearRepository;
         private readonly ILogger<CharacterArsenalController> _logger;
@@ -29,13 +30,15 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findCharacter = await _characterRepository.GetByIdAsync(characterId, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/get-all", "character not found"));
                 var responseRepo = await _characterArsenalRepository.GetAsync(characterId, cancellationToken);
                 var response = _mapper.Map<IEnumerable<Shared.Models.CharacterArsenalModel>>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-arsenal/get-all",  ex));
             }
         }
         [HttpGet("{id}")]
@@ -44,14 +47,16 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _characterArsenalRepository.GetByIdAsync(id, cancellationToken);
+                if(responseRepo is null ) return NotFound(ErrorResponseModel.NewError("character-arsenal/get-one", "item not found"));
                 var response = _mapper.Map<Shared.Models.CharacterArsenalModel>(responseRepo);
                 var gearItem = await _characterGearRepository.GetByIdAsync(responseRepo.GEAR_ID, cancellationToken);
+                if (gearItem is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/get-one", "gear not found"));
                 response.NAME = gearItem.NAME;
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-arsenal/get-one", ex));
             }
         }
         [HttpPost]
@@ -59,6 +64,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findGear = await _characterGearRepository.GetByIdAsync(request.GearId, cancellationToken);
+                if(findGear is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/insert-item", "gear not found"));
                 var newItem = new Shared.Models.CharacterArsenalModel
                 {
                     CHARACTER_ID = request.CharacterId,
@@ -71,11 +78,11 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMapped = _mapper.Map<Data.Models.CharacterArsenalModel>(newItem);
                 await _characterArsenalRepository.InsertAsync(newItemMapped, cancellationToken);
-                return Ok();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-arsenal/insert-item", ex));
             }
         }
         [HttpPut]
@@ -84,7 +91,9 @@ namespace DnD.Api.Controllers
             try
             {
                 var findItem = await _characterArsenalRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findItem is null) return NotFound("Item does not exists");
+                if (findItem is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/update-item", "item not found"));
+                var findGear = await _characterGearRepository.GetByIdAsync(request.GearId, cancellationToken);
+                if (findGear is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/insert-item", "gear not found"));
                 var newItem = new Shared.Models.CharacterArsenalModel
                 {
                     ID = request.Id,
@@ -101,7 +110,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-arsenal/update-item", ex));
             }
         }
         [HttpDelete("{id}/delete")]
@@ -110,13 +119,13 @@ namespace DnD.Api.Controllers
             try
             {
                 var findItem = await _characterArsenalRepository.GetByIdAsync(id, cancellationToken);
-                if (findItem is null) return NotFound("Item does not exists");
+                if (findItem is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/delete-item", "item not found"));
                 await _characterArsenalRepository.DeleteAsync(id, cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("character-arsenal/delete-item", ex));
             }
         }
     }

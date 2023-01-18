@@ -38,7 +38,7 @@ namespace DnD.Api.Controllers
             {
                 var userIdentity = User.GetSubjectId();
                 var user = await _userRepository.GetByIdAsync(userIdentity, cancellationToken);
-                if (user is null) return NotFound("User not Found");
+                if (user is null) return NotFound(ErrorResponseModel.NewError("user/fetch-all", "user not found"));
 
                 var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
                 var responseRepo = await _userRepository.GetAsync(userRole.ROLE, cancellationToken);
@@ -63,7 +63,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var user = await _userRepository.GetByIdAsync(id, cancellationToken);
-                if (user is null) return NotFound("User not Found");
+                if (user is null) return NotFound(ErrorResponseModel.NewError("user/fetch-one", "user not found"));
 
                 var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
                 var responseRepo = await _userRepository.GetByIdAsync(id, cancellationToken);
@@ -73,7 +73,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("user/fetch-one", ex));
             }
         }
 
@@ -83,7 +83,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                if (user is null) return NotFound("User not Found");
+                if (user is null) return NotFound(ErrorResponseModel.NewError("user/profile", "user not found"));
 
                 var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
                 var responseRepo = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
@@ -93,7 +93,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("user/profile", ex));
             }
         }
         [HttpPost]
@@ -103,7 +103,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var checkEmail = await _userRepository.CheckEmailAsync(request.Email, cancellationToken);
-                if (checkEmail) return BadRequest("Email already exists");
+                if (checkEmail) return BadRequest(ErrorResponseModel.NewError("user/insert", "email already exists"));
                 var newUser = new Data.Models.UserModel
                 {
                     ID = Guid.NewGuid().ToString(),
@@ -117,7 +117,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("user/insert", ex));
             }
         }
         [HttpPut]
@@ -126,11 +126,11 @@ namespace DnD.Api.Controllers
             try
             {
                 var findUser = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findUser is null) return NotFound("User Not Found");
-                if(findUser.EMAIL != request.Email)
+                if (findUser is null) return NotFound(ErrorResponseModel.NewError("user/update", "user not found"));
+                if (findUser.EMAIL != request.Email)
                 {
                     var checkEmail = await _userRepository.CheckEmailAsync(request.Email, cancellationToken);
-                    if (checkEmail) return BadRequest("Email already exists");
+                    if (checkEmail) return BadRequest(ErrorResponseModel.NewError("user/update", "email already exists"));
                 }
                 var updateUser = new Data.Models.UserModel
                 {
@@ -144,7 +144,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("user/update", ex));
             }
         }
         [HttpPut("{id}/changepassword")]
@@ -158,15 +158,15 @@ namespace DnD.Api.Controllers
                     if (id != loggedInUser) return Unauthorized();
                 }
                 var user = await _userRepository.GetByIdAsync(id, cancellationToken);
-                if (user is null) return BadRequest("User not Found");
+                if (user is null) return NotFound(ErrorResponseModel.NewError("user/change-password", "user not found"));
                 var isVerified = BCrypt.Net.BCrypt.Verify(request.OldPassword, user.PASSWORD);
-                if (!isVerified) return BadRequest("Old Password does not match");
+                if (!isVerified) return BadRequest(ErrorResponseModel.NewError("user/change-password", "old password does not match"));
                 await _userRepository.ChangePasswordAsync(id, BCrypt.Net.BCrypt.HashPassword(request.NewPassword), cancellationToken);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("user/change-password", ex));
             }
         }
     }
