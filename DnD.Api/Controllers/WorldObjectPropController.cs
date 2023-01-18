@@ -24,12 +24,14 @@ namespace DnD.Api.Controllers
             _mapper = mapper;
             _worldObjectRepository = worldObjectRepository;
         }
-        [HttpGet("{worldId}/all")]
-        public async Task<IActionResult> Get(int worldId, CancellationToken cancellationToken)
+        [HttpGet("{objectId}/all")]
+        public async Task<IActionResult> Get(int objectId, CancellationToken cancellationToken)
         {
             try
             {
-                var responseRepo = await _worldObjectPropRepository.GetAsync(worldId, cancellationToken);
+                var findObject = await _worldObjectRepository.GetByIdAsync(objectId, cancellationToken);
+                if (findObject is null) return NotFound(ErrorResponseModel.NewError("world-object-prop/get", "object not found"));
+                var responseRepo = await _worldObjectPropRepository.GetAsync(objectId, cancellationToken);
                 var response = _mapper.Map<IEnumerable<Shared.Models.WorldObjectPropModel>>(responseRepo);
                 return Ok(response);
             }
@@ -68,7 +70,7 @@ namespace DnD.Api.Controllers
                 };
                 var newPropMap = _mapper.Map<Data.Models.WorldObjectPropModel>(newProp);
                 await _worldObjectPropRepository.InsertAsync(newPropMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -90,7 +92,7 @@ namespace DnD.Api.Controllers
                 };
                 var newPropMap = _mapper.Map<Data.Models.WorldObjectPropModel>(newProp);
                 await _worldObjectPropRepository.UpdateAsync(newPropMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -105,7 +107,7 @@ namespace DnD.Api.Controllers
                 var responseRepo = await _worldObjectPropRepository.GetByIdAsync(id, cancellationToken);
                 if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object-prop/delete", "object property not found"));
                 await _worldObjectPropRepository.DeleteAsync(id, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

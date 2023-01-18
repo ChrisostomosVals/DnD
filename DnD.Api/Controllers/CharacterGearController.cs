@@ -29,6 +29,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findCharacter = await _characterRepository.GetByIdAsync(characterId, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character-gear/get", "character not found"));
                 var responseRepo = await _characterGearRepository.GetAsync(characterId, cancellationToken);
                 var response = _mapper.Map<IEnumerable<Shared.Models.CharacterGearModel>>(responseRepo);
                 return Ok(response);
@@ -133,7 +135,7 @@ namespace DnD.Api.Controllers
                 };
                 var newGearMapped = _mapper.Map<Data.Models.CharacterGearModel>(transferGear);
                 await _characterGearRepository.TransferItemAsync(newGearMapped, cancellationToken);
-                return NoContent();
+                return Ok();
 
             }
             catch (Exception ex)

@@ -12,17 +12,15 @@ namespace DnD.Api.Controllers
     [Authorize]
     public class WorldMiscController : ControllerBase
     {
-        private readonly WorldObjectRepository _worldObjectRepository;
         private readonly WorldMiscRepository _worldMiscRepository;
         private readonly ILogger<WorldMiscController> _logger;
         private readonly IMapper _mapper;
 
-        public WorldMiscController(WorldMiscRepository worldMiscRepository, ILogger<WorldMiscController> logger, IMapper mapper, WorldObjectRepository worldObjectRepository)
+        public WorldMiscController(WorldMiscRepository worldMiscRepository, ILogger<WorldMiscController> logger, IMapper mapper)
         {
             _worldMiscRepository = worldMiscRepository;
             _logger = logger;
             _mapper = mapper;
-            _worldObjectRepository = worldObjectRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
@@ -82,7 +80,7 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldMiscModel>(newItem);
                 await _worldMiscRepository.InsertAsync(newItemMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -104,7 +102,7 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldMiscModel>(newItem);
                 await _worldMiscRepository.UpdateAsync(newItemMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

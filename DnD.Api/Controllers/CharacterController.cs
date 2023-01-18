@@ -159,7 +159,7 @@ namespace DnD.Api.Controllers
                 };
                 var newCharacterMapped = _mapper.Map<Data.Models.CharacterModel>(newCharacter);
                 await _characterRepository.CreateAsync(newCharacterMapped, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -226,7 +226,7 @@ namespace DnD.Api.Controllers
                 };
                 var newCharacterMapped = _mapper.Map<Data.Models.CharacterModel>(newCharacter);
                 await _characterRepository.UpdateAsync(newCharacterMapped, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -242,7 +242,7 @@ namespace DnD.Api.Controllers
                 var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
                 if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/delete", "character not found"));
                 await _characterRepository.DeleteAsync(id, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

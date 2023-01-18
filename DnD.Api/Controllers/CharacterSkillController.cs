@@ -29,6 +29,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                var findCharacter = await _characterRepository.GetByIdAsync(characterId, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character-skill/get", "character not found"));
                 var responseRepo = await _characterSkillRepository.GetByIdAsync(characterId, cancellationToken);
                 var response = _mapper.Map<IEnumerable<Shared.Models.CharacterSkillModel>>(responseRepo);
                 return Ok(response);
@@ -73,7 +75,7 @@ namespace DnD.Api.Controllers
                 };
                 var newCharacterSkillMapped = _mapper.Map<Data.Models.CharacterSkillModel>(newCharacterSkill);
                 await _characterSkillRepository.InsertSkill(newCharacterSkillMapped, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

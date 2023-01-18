@@ -1,0 +1,15 @@
+export declare const characterEndpoint = "api/Character";
+export declare const characterGearEndpoint = "api/CharacterGear";
+export declare const characterArsenalEndpoint = "api/CharacterArsenal";
+export declare const characterSkillEndpoint = "api/CharacterSkill";
+export declare const classCategoryEndpoint = "api/ClassCategory";
+export declare const classEndpoint = "api/Class";
+export declare const locationEndpoint = "api/Location";
+export declare const locationEventEndpoint = "api/LocationEvent";
+export declare const raceCategoryEndpoint = "api/RaceCategory";
+export declare const raceEndpoint = "api/Race";
+export declare const skillEndpoint = "api/Skill";
+export declare const userEndpoint = "api/User";
+export declare const worldMiscEndpoint = "api/WorldMisc";
+export declare const worldObjectEndpoint = "api/WorldObject";
+export declare const worldObjectPropEndpoint = "api/WorldObjectProp";

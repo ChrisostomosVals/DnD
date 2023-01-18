@@ -1,0 +1,42 @@
+import SchemeModel from "./SchemeModel";
+
+export default interface CharacterModel {
+    id: string;
+    name: string;
+    type: string;
+    classId: number;
+    gender: string | null;
+    raceId: number;
+    level: number;
+    strength: number;
+    dexterity: number;
+    intelligence: number;
+    constitution: number;
+    wisdom: number;
+    charisma: number;
+    armorClass: number;
+    fortitude: number;
+    reflex: number;
+    will: number;
+    baseAttackBonus: number;
+    spellResistance: number;
+    size: string | null;
+    maxHp: number;
+    currentHp: number;
+    speed: number;
+    hair: string | null;
+    eyes: string | null;
+    fly: number;
+    swim: number;
+    climb: number;
+    burrow: number;
+    touch: number;
+    flatFooted: number;
+    homeland: string | null;
+    deity: string | null;
+    height: number;
+    weight: number;
+    experience: number;
+    age: string | null;
+    scheme: SchemeModel | null;
+}

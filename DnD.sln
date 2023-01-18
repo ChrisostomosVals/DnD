@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DnD.Web", "DnD.Web\DnD.Web.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DnD.Identity", "DnD.Identity\DnD.Identity.csproj", "{BA94C3BC-68E9-4050-AD9D-6B19887DC9DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{89A09965-E90D-48CB-B4C9-FF686924A5C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{89A09965-E90D-48CB-B4C9-FF686924A5C4}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "DnD.JavaScript.SDK", "DnD.JavaScript.SDK\DnD.JavaScript.SDK.njsproj", "{8D8C11F0-6DE9-484F-9CA2-BC55243DF6BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{89A09965-E90D-48CB-B4C9-FF686924A5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89A09965-E90D-48CB-B4C9-FF686924A5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89A09965-E90D-48CB-B4C9-FF686924A5C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D8C11F0-6DE9-484F-9CA2-BC55243DF6BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D8C11F0-6DE9-484F-9CA2-BC55243DF6BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D8C11F0-6DE9-484F-9CA2-BC55243DF6BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D8C11F0-6DE9-484F-9CA2-BC55243DF6BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

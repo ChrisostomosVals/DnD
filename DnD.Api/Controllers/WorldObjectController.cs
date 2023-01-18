@@ -64,7 +64,7 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldObjectModel>(newItem);
                 await _worldObjectRepository.CreateAsync(newItemMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMap = _mapper.Map<Data.Models.WorldObjectModel>(newItem);
                 await _worldObjectRepository.Update(newItemMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -102,7 +102,7 @@ namespace DnD.Api.Controllers
                 var findItem = await _worldObjectRepository.GetByIdAsync(id, cancellationToken);
                 if (findItem is null) return NotFound(ErrorResponseModel.NewError("world-object/delete", "Item not found"));
                 await _worldObjectRepository.Delete(id, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

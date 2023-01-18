@@ -46,7 +46,7 @@ namespace DnD.Api.Controllers
                 var response = _mapper.Map<IEnumerable<Shared.Models.UserModel>>(responseRepo);
                 foreach (var userResponse in response)
                 {
-                    var role = await _userRoleRepository.GetAsync(userResponse.ROLE_ID);
+                    var role = await _userRoleRepository.GetAsync(userResponse.ROLE_ID, cancellationToken);
                     userResponse.ROLE = role.ROLE;
                 }
                 return Ok(response);
@@ -113,7 +113,7 @@ namespace DnD.Api.Controllers
                     PASSWORD = BCrypt.Net.BCrypt.HashPassword(request.Password)
                 };
                 await _userRepository.InsertAsync(newUser, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -140,14 +140,14 @@ namespace DnD.Api.Controllers
                     EMAIL = request.Email,
                 };
                 await _userRepository.UpdateAsync(updateUser, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("user/update", ex));
             }
         }
-        [HttpPut("{id}/changepassword")]
+        [HttpPatch("{id}/changepassword")]
         public async Task<IActionResult> ChangePassword(string id, ChangePasswordRequestModel request, CancellationToken cancellationToken)
         {
             try
@@ -162,7 +162,7 @@ namespace DnD.Api.Controllers
                 var isVerified = BCrypt.Net.BCrypt.Verify(request.OldPassword, user.PASSWORD);
                 if (!isVerified) return BadRequest(ErrorResponseModel.NewError("user/change-password", "old password does not match"));
                 await _userRepository.ChangePasswordAsync(id, BCrypt.Net.BCrypt.HashPassword(request.NewPassword), cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

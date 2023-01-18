@@ -79,7 +79,7 @@ namespace DnD.Api.Controllers
                 };
                 var newItemMapped = _mapper.Map<Data.Models.CharacterArsenalModel>(newItem);
                 await _characterArsenalRepository.InsertAsync(newItemMapped, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -122,7 +122,7 @@ namespace DnD.Api.Controllers
                 var findItem = await _characterArsenalRepository.GetByIdAsync(id, cancellationToken);
                 if (findItem is null) return NotFound(ErrorResponseModel.NewError("character-arsenal/delete-item", "item not found"));
                 await _characterArsenalRepository.DeleteAsync(id, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

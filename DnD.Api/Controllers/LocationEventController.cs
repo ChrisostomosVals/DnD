@@ -69,7 +69,7 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationEventMap = _mapper.Map<Data.Models.LocationEventModel>(newLocationEvent);
                 await _locationEventRepository.CreateAsync(newLocationEventMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -90,7 +90,7 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationEventMap = _mapper.Map<Data.Models.LocationEventModel>(newLocationEvent);
                 await _locationEventRepository.UpdateAsync(newLocationEventMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -105,7 +105,7 @@ namespace DnD.Api.Controllers
                 var responseRepo = await _locationEventRepository.GetByIdAsync(id, cancellationToken);
                 if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("location-event/delete", "location event not found"));
                 await _locationEventRepository.DeleteAsync(id, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {

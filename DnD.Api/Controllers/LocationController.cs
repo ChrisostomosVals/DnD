@@ -78,7 +78,7 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationMap = _mapper.Map<Data.Models.LocationModel>(newLocation);
                 await _locationRepository.InsertAsync(newLocationMap, cancellationToken); 
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace DnD.Api.Controllers
                 };
                 var newLocationMap = _mapper.Map<Data.Models.LocationModel>(newLocation);
                 await _locationRepository.UpdateAsync(newLocationMap, cancellationToken);
-                return NoContent();
+                return Ok();
             }
             catch (Exception ex)
             {
