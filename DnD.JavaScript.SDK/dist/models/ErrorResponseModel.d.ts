@@ -1,7 +1,7 @@
 export default class ErrorResponseModel {
     error: string | null;
     message: string | null;
-    private exception;
+    protected exception: Error | null;
     name: string | null;
     constructor(error: string, message: string, exception: Error | null, name: string | null);
     static NewErrorMsg(error: string, message: string): ErrorResponseModel;

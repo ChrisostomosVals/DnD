@@ -8,9 +8,9 @@ import HttpClient from "../utils/httpService";
 
 
 export default class CharacterApi{
-    public static async GetAsync(token:string, url: string) : Promise<ApiResponseModel<Array<CharacterModel>>> {
+    public static async GetAsync(token:string, url: string, type: string | null) : Promise<ApiResponseModel<Array<CharacterModel>>> {
         try {
-            const uri = `${url}/${characterEndpoint}`;
+            const uri = type === null ? `${url}/${characterEndpoint}` : `${url}/${characterEndpoint}?type=${type}`;
             const response = await HttpClient.getAsync(token, uri)
             if(response.ok){
                 const data = await response.json();

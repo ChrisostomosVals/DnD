@@ -32,7 +32,7 @@ class ConnectApi {
                     formBody.push(encodedKey + "=" + encodedValue);
                 }
                 let stringFormBody = formBody.join("&");
-                const response = yield fetch(`${url}/gateway/connect`, {
+                const response = yield fetch(`${url}/connect`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",

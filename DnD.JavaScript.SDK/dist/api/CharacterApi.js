@@ -17,10 +17,10 @@ const ErrorResponseModel_1 = __importDefault(require("../models/ErrorResponseMod
 const constants_1 = require("../utils/constants");
 const httpService_1 = __importDefault(require("../utils/httpService"));
 class CharacterApi {
-    static GetAsync(token, url) {
+    static GetAsync(token, url, type) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterEndpoint}`;
+                const uri = type === null ? `${url}/${constants_1.characterEndpoint}` : `${url}/${constants_1.characterEndpoint}?type=${type}`;
                 const response = yield httpService_1.default.getAsync(token, uri);
                 if (response.ok) {
                     const data = yield response.json();

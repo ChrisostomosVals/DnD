@@ -81,7 +81,7 @@ export default class UserApi{
                 return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
             }
         } catch (error) {
-            return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewError("UserApi.GetByCategoryIdAsync().Exception", error));;
+            return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewError("UserApi.GetProfileAsync().Exception", error));;
         }
     }
     public static async InsertAsync(token:string, url: string, request: InsertUserRequestModel) : Promise<ApiResponseModel<void>> {

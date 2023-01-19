@@ -1,7 +1,7 @@
 export default class ErrorResponseModel {
     public error: string | null;
     public message: string | null;
-    private exception: Error | null;
+    protected exception: Error | null;
     public name: string | null;
 
 

@@ -96,7 +96,7 @@ class UserApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("UserApi.GetByCategoryIdAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("UserApi.GetProfileAsync().Exception", error));
                 ;
             }
         });
