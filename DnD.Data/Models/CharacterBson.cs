@@ -32,7 +32,7 @@ namespace DnD.Data.Models
         public List<StatBson>? Stats { get; set; }
         [BsonElement("properties")]
         public List<PropertyBson>? Properties { get; set; }
-        [BsonElement("stats")]
+        [BsonElement("visible")]
         public bool Visible { get; set; }
     }
 }

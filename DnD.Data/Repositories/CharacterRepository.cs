@@ -1,6 +1,8 @@
-﻿using DataAdapter.Sql;
+﻿using DataAdapter.NoSql;
+using DataAdapter.Sql;
 using DnD.Data.Internal;
 using DnD.Data.Models;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,125 +14,140 @@ namespace DnD.Data.Repositories
     public class CharacterRepository
     {
         private readonly SqlAdapter _adapter;
-        public CharacterRepository(SqlAdapter adapter)
+        private readonly IMongoDbConnection _connection;
+        public CharacterRepository(IMongoDbConnection connection)
         {
-            _adapter = adapter;
+            _connection = connection;
         }
-        public async Task<IEnumerable<CharacterModel>> GetAsync(CancellationToken cancellationToken) => await _adapter.FindAsync<CharacterModel, dynamic>(
-            Procedures.Characters.Get,
-            new { },
-            cancellationToken);
-        public async Task<CharacterModel> GetByIdAsync(string id, CancellationToken cancellationToken) => await _adapter.FindOneAsync<CharacterModel, dynamic>(
-            Procedures.Characters.GetById,
-            new { id },
-            cancellationToken);
-        public async Task<IEnumerable<CharacterModel>> GetBossAsync(CancellationToken cancellationToken) => await _adapter.FindAsync<CharacterModel, dynamic>(
-            Procedures.Characters.GetBoss,
-            new { },
-            cancellationToken);
-        public async Task<IEnumerable<CharacterModel>> GetHeroAsync(CancellationToken cancellationToken) => await _adapter.FindAsync<CharacterModel, dynamic>(
-            Procedures.Characters.GetHero,
-            new { },
-            cancellationToken);
-        public async Task<IEnumerable<CharacterModel>> GetHostileAsync(CancellationToken cancellationToken) => await _adapter.FindAsync<CharacterModel, dynamic>(
-            Procedures.Characters.GetHostile,
-            new { },
-            cancellationToken);
-        public async Task<IEnumerable<CharacterModel>> GetNpcAsync(CancellationToken cancellationToken) => await _adapter.FindAsync<CharacterModel, dynamic>(
-            Procedures.Characters.GetnNpc,
-            new { },
-            cancellationToken);
-        public async Task CreateAsync(CharacterModel character, CancellationToken cancellationToken) => await _adapter.SaveAsync(
-            Procedures.Characters.Create,
-            new
-            { 
-                id = character.ID, 
-                name = character.NAME, 
-                classId = character.CLASS_ID,
-                type = character.TYPE, 
-                raceId = character.RACE_ID, 
-                gender = character.GENDER,
-                level = character.LEVEL,
-                strength = character.STRENGTH,
-                dexterity = character.DEXTERITY,
-                intelligence = character.INTELLIGENCE,
-                constitution = character.CONSTITUTION,
-                wisdom = character.WISDOM,
-                charisma = character.CHARISMA,
-                armorClass = character.ARMOR_CLASS,
-                fortitude = character.FORTITUDE,
-                reflex = character.REFLEX,
-                will = character.WILL,
-                baseAttackBonus = character.BASE_ATTACK_BONUS,
-                spellResistance = character.SPELL_RESISTANCE,
-                size = character.SIZE,
-                maxHp = character.MAX_HP,
-                currentHp = character.CURRENT_HP,
-                speed = character.SPEED,
-                hair = character.HAIR,
-                eyes = character.EYES,
-                fly = character.FLY,
-                climb = character.CLIMB,
-                swim = character.SWIM,
-                burrow = character.BURROW,
-                touch = character.TOUCH,
-                flatFooted = character.FLAT_FOOTED,
-                homeland = character.HOMELAND,
-                deity = character.DEITY,
-                height = character.HEIGHT,
-                weight = character.WEIGHT,
-                experience = character.EXPERIENCE,
-                age = character.AGE,
-                scheme = character.SCHEME,
-            },
-            cancellationToken);
-        public async Task UpdateAsync(CharacterModel character, CancellationToken cancellationToken) => await _adapter.SaveAsync(
-            Procedures.Characters.Update,
-            new 
-            {
-                id = character.ID,
-                name = character.NAME,
-                classId = character.CLASS_ID,
-                type = character.TYPE,
-                raceId = character.RACE_ID,
-                gender = character.GENDER,
-                level = character.LEVEL,
-                strength = character.STRENGTH,
-                dexterity = character.DEXTERITY,
-                intelligence = character.INTELLIGENCE,
-                constitution = character.CONSTITUTION,
-                wisdom = character.WISDOM,
-                charisma = character.CHARISMA,
-                armorClass = character.ARMOR_CLASS,
-                fortitude = character.FORTITUDE,
-                reflex = character.REFLEX,
-                will = character.WILL,
-                baseAttackBonus = character.BASE_ATTACK_BONUS,
-                spellResistance = character.SPELL_RESISTANCE,
-                size = character.SIZE,
-                maxHp = character.MAX_HP,
-                currentHp = character.CURRENT_HP,
-                speed = character.SPEED,
-                hair = character.HAIR,
-                eyes = character.EYES,
-                fly = character.FLY,
-                climb = character.CLIMB,
-                swim = character.SWIM,
-                burrow = character.BURROW,
-                touch = character.TOUCH,
-                flatFooted = character.FLAT_FOOTED,
-                homeland = character.HOMELAND,
-                deity = character.DEITY,
-                height = character.HEIGHT,
-                weight = character.WEIGHT,
-                experience = character.EXPERIENCE,
-                age = character.AGE,
-                scheme = character.SCHEME,
-            },
-            cancellationToken);
-        public async Task DeleteAsync(string id, CancellationToken cancellationToken) => await _adapter.SaveAsync(
-           Procedures.Characters.Delete,
-           new { id },
-           cancellationToken);
+        public async Task<IEnumerable<CharacterBson>> GetAsync(CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Empty;
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task<CharacterBson> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.FirstOrDefaultAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<CharacterBson>> GetBossAsync(CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Type, "BOSS");
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<CharacterBson>> GetHeroAsync(CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Type, "HERO");
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<CharacterBson>> GetHostileAsync(CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Type, "MONSTER");
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<CharacterBson>> GetNpcAsync(CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Type, "NPC");
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task CreateAsync(CharacterBson character, CancellationToken cancellationToken = default)
+        {
+            character.Id = null;
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            await characters.InsertOneAsync(character, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateAsync(CharacterBson character, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, character.Id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Name, character.Name)
+                .Set(c => c.RaceId, character.RaceId)
+                .Set(c => c.ClassId, character.ClassId)
+                .Set(c => c.Type, character.Type);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateGearAsync(string id, List<GearBson> gear, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Gear, gear);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateArsenalAsync(string id,  List<ArsenalBson> arsenal, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Arsenal, arsenal);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateSkillsAsync(string id, List<SkillBson> skills, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Skills, skills);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateFeatsAsync(string id, List<string> feats, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Feats, feats);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateSpecialAbilitiesAsync(string id, List<string> specialAbilities, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Feats, specialAbilities);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateStatsAsync(string id, List<StatBson> stats, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Stats, stats);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdatePropertiesAsync(string id, List<PropertyBson> properties, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Properties, properties);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdateVisibilityAsync(string id, bool visible, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
+                .Set(c => c.Visible, visible);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        
+        public async Task DeleteAsync(string id, CancellationToken cancellationToken)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            await characters.DeleteOneAsync(filter, cancellationToken: cancellationToken);
+        }
     }
 }
