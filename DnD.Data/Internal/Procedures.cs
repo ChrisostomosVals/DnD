@@ -52,6 +52,15 @@ namespace DnD.Data.Internal
                 public const string Update = "dbo.Character_Update_Arsenal";
                 public const string Delete = "dbo.Character_Arsenal_Delete";
             }
+            public class Properties
+            {
+                public const string Get = "dbo.Character_Prop_Get";
+                public const string GetById = "dbo.Character_Prop_Get_ById";
+                public const string GetByType = "dbo.Character_Prop_Get_ByType";
+                public const string Insert = "dbo.Character_Prop_Insert";
+                public const string Update = "dbo.Character_Prop_Update";
+                public const string Delete = "dbo.Character_Prop_Delete";
+            }
         }
         public class Skill
         {

@@ -12,18 +12,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MediaApi = void 0;
 const ApiResponseModel_1 = __importDefault(require("../models/ApiResponseModel"));
 const ErrorResponseModel_1 = __importDefault(require("../models/ErrorResponseModel"));
 const constants_1 = require("../utils/constants");
 const httpService_1 = __importDefault(require("../utils/httpService"));
-class CharacterSkillApi {
-    static GetAsync(token, url, characterId) {
+class MediaApi {
+    static UploadAsync(token, url, type, name, files) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}/${characterId}/all`;
+                const uri = `${url}/${constants_1.mediaEndpoint}/upload`;
+                const formData = new FormData();
+                formData.append("type", type);
+                formData.append("name", name);
+                for (const file of files) {
+                    formData.append('file', file, file.name);
+                }
+                const response = yield fetch(uri, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    }
+                });
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("MediaApi.UploadAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static DownloadAsync(token, url, path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.mediaEndpoint}/file/${path}`;
                 const response = yield httpService_1.default.getAsync(token, uri);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = yield response.blob();
                     if (data === null) {
                         return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
@@ -40,16 +77,16 @@ class CharacterSkillApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.GetAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("MediaApi.DownloadAsync().Exception", error));
                 ;
             }
         });
     }
-    static GetByIdAsync(token, url, id) {
+    static DeleteAsync(token, url, path) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}/${id}`;
-                const response = yield httpService_1.default.getAsync(token, uri);
+                const uri = `${url}/${constants_1.mediaEndpoint}/${path}/delete`;
+                const response = yield httpService_1.default.deleteAsync(token, uri);
                 if (response.ok) {
                     const data = yield response.json();
                     if (data === null) {
@@ -68,67 +105,11 @@ class CharacterSkillApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.GetByIdAsync().Exception", error));
-                ;
-            }
-        });
-    }
-    static CreateAsync(token, url, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}`;
-                const response = yield httpService_1.default.postAsync(token, uri, request);
-                if (response.ok) {
-                    const data = yield response.json();
-                    if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
-                    }
-                    return new ApiResponseModel_1.default(data, null);
-                }
-                else if (response.status == 400 || response.status == 404) {
-                    const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
-                }
-                else if (response.status == 401) {
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
-                }
-            }
-            catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.CreateAsync().Exception", error));
-                ;
-            }
-        });
-    }
-    static UpdateAsync(token, url, request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}`;
-                const response = yield httpService_1.default.putAsync(token, uri, request);
-                if (response.ok) {
-                    const data = yield response.json();
-                    if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
-                    }
-                    return new ApiResponseModel_1.default(data, null);
-                }
-                else if (response.status == 400 || response.status == 404) {
-                    const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
-                }
-                else if (response.status == 401) {
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
-                }
-            }
-            catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.UpdateAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("MediaApi.DeleteAsync().Exception", error));
                 ;
             }
         });
     }
 }
-exports.default = CharacterSkillApi;
-//# sourceMappingURL=CharacterSkillApi.js.map
+exports.MediaApi = MediaApi;
+//# sourceMappingURL=MediaApi.js.map

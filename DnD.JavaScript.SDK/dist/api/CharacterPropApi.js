@@ -16,11 +16,11 @@ const ApiResponseModel_1 = __importDefault(require("../models/ApiResponseModel")
 const ErrorResponseModel_1 = __importDefault(require("../models/ErrorResponseModel"));
 const constants_1 = require("../utils/constants");
 const httpService_1 = __importDefault(require("../utils/httpService"));
-class CharacterSkillApi {
+class CharacterPropApi {
     static GetAsync(token, url, characterId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}/${characterId}/all`;
+                const uri = `${url}/${constants_1.characterPropEndpoint}/${characterId}/all`;
                 const response = yield httpService_1.default.getAsync(token, uri);
                 if (response.ok) {
                     const data = yield response.json();
@@ -40,7 +40,7 @@ class CharacterSkillApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.GetAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterPropApi.GetAsync().Exception", error));
                 ;
             }
         });
@@ -48,7 +48,7 @@ class CharacterSkillApi {
     static GetByIdAsync(token, url, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}/${id}`;
+                const uri = `${url}/${constants_1.characterPropEndpoint}/${id}`;
                 const response = yield httpService_1.default.getAsync(token, uri);
                 if (response.ok) {
                     const data = yield response.json();
@@ -68,15 +68,15 @@ class CharacterSkillApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.GetByIdAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterPropApi.GetByIdAsync().Exception", error));
                 ;
             }
         });
     }
-    static CreateAsync(token, url, request) {
+    static InsertAsync(token, url, request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}`;
+                const uri = `${url}/${constants_1.characterPropEndpoint}`;
                 const response = yield httpService_1.default.postAsync(token, uri, request);
                 if (response.ok) {
                     const data = yield response.json();
@@ -96,7 +96,7 @@ class CharacterSkillApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.CreateAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterPropApi.InsertAsync().Exception", error));
                 ;
             }
         });
@@ -104,7 +104,7 @@ class CharacterSkillApi {
     static UpdateAsync(token, url, request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterSkillEndpoint}`;
+                const uri = `${url}/${constants_1.characterPropEndpoint}`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
                     const data = yield response.json();
@@ -124,11 +124,39 @@ class CharacterSkillApi {
                 }
             }
             catch (error) {
-                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterSkillApi.UpdateAsync().Exception", error));
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterPropApi.UpdateAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static DeleteAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterPropEndpoint}/${id}/delete`;
+                const response = yield httpService_1.default.deleteAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterPropApi.DeleteAsync().Exception", error));
                 ;
             }
         });
     }
 }
-exports.default = CharacterSkillApi;
-//# sourceMappingURL=CharacterSkillApi.js.map
+exports.default = CharacterPropApi;
+//# sourceMappingURL=CharacterPropApi.js.map

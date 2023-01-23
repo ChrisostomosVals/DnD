@@ -78,7 +78,7 @@ export default class CharacterSkillApi{
                 return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
             }
         } catch (error) {
-            return new ApiResponseModel<void>(null, ErrorResponseModel.NewError("CharacterSkillApi.InsertItemAsync().Exception", error));;
+            return new ApiResponseModel<void>(null, ErrorResponseModel.NewError("CharacterSkillApi.CreateAsync().Exception", error));;
         }
     }
     public static async UpdateAsync(token:string, url: string, request: UpdateCharacterSkillRequestModel) : Promise<ApiResponseModel<void>> {
@@ -102,7 +102,7 @@ export default class CharacterSkillApi{
                 return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
             }
         } catch (error) {
-            return new ApiResponseModel<void>(null, ErrorResponseModel.NewError("CharacterSkillApi.UpdateItemAsync().Exception", error));;
+            return new ApiResponseModel<void>(null, ErrorResponseModel.NewError("CharacterSkillApi.UpdateAsync().Exception", error));;
         }
     }
    

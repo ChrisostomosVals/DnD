@@ -1,4 +1,5 @@
 export declare const characterEndpoint = "api/Character";
+export declare const characterPropEndpoint = "api/CharacterProp";
 export declare const characterGearEndpoint = "api/CharacterGear";
 export declare const characterArsenalEndpoint = "api/CharacterArsenal";
 export declare const characterSkillEndpoint = "api/CharacterSkill";
@@ -13,3 +14,4 @@ export declare const userEndpoint = "api/User";
 export declare const worldMiscEndpoint = "api/WorldMisc";
 export declare const worldObjectEndpoint = "api/WorldObject";
 export declare const worldObjectPropEndpoint = "api/WorldObjectProp";
+export declare const mediaEndpoint = "api/Media";

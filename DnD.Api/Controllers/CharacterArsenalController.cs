@@ -18,9 +18,9 @@ namespace DnD.Api.Controllers
         private readonly ILogger<CharacterArsenalController> _logger;
         private readonly IMapper _mapper;
 
-        public CharacterArsenalController(CharacterArsenalRepository characterMainStatsRepository, CharacterGearRepository characterGearRepository, ILogger<CharacterArsenalController> logger, IMapper mapper, CharacterRepository characterRepository)
+        public CharacterArsenalController(CharacterArsenalRepository characterArsenalRepository, CharacterGearRepository characterGearRepository, ILogger<CharacterArsenalController> logger, IMapper mapper, CharacterRepository characterRepository)
         {
-            _characterArsenalRepository = characterMainStatsRepository;
+            _characterArsenalRepository = characterArsenalRepository;
             _characterGearRepository = characterGearRepository;
             _logger = logger;
             _mapper = mapper;
