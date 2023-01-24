@@ -8,8 +8,8 @@ namespace DnD.Shared.Models
     public class UserRoleModel
     {
         [JsonPropertyName("id")]
-        public int ID { get; set; }
+        public string Id { get; set; }
         [JsonPropertyName("role")]
-        public string ROLE { get; set; }
+        public string Role { get; set; }
     }
 }

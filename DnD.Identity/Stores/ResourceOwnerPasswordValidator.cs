@@ -30,13 +30,13 @@ namespace DnD.Identity.Stores
                     context.Result.IsError = true;
                     return;
                 }
-                var isVerified = BCrypt.Net.BCrypt.Verify(context.Password, user.PASSWORD);
+                var isVerified = BCrypt.Net.BCrypt.Verify(context.Password, user.Password);
                 if (isVerified)
                 {
-                    var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID);
-                    context.Result = new GrantValidationResult(user.ID,
+                    var userRole = await _userRoleRepository.GetByIdAsync(user.RoleId);
+                    context.Result = new GrantValidationResult(user.Id,
                         authenticationMethod: AccessTokenType.Jwt.ToString(),
-                        claims: new Collection<Claim> { new Claim("role", userRole.ROLE) }, identityProvider: "DnD Renia");
+                        claims: new Collection<Claim> { new Claim("role", userRole.Role) }, identityProvider: "DnD Renia");
                     context.Result.IsError = false;
                 }
                 else

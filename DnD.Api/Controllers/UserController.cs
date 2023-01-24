@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DnD.Api.Extensions;
+using DnD.Data.Models;
 using DnD.Data.Repositories;
 using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,22 +39,22 @@ namespace DnD.Api.Controllers
             {
                 var userIdentity = User.GetSubjectId();
                 var user = await _userRepository.GetByIdAsync(userIdentity, cancellationToken);
-                if (user is null) return NotFound(ErrorResponseModel.NewError("user/fetch-all", "user not found"));
+                if (user is null) return NotFound(ErrorResponseModel.NewError("user/get-all", "user not found"));
 
-                var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
-                var responseRepo = await _userRepository.GetAsync(userRole.ROLE, cancellationToken);
+                var userRole = await _userRoleRepository.GetByIdAsync(user.RoleId, cancellationToken);
+                var responseRepo = await _userRepository.GetAsync(cancellationToken);
                 
-                var response = _mapper.Map<IEnumerable<Shared.Models.UserModel>>(responseRepo);
+                var response = _mapper.Map<IEnumerable<UserModel>>(responseRepo);
                 foreach (var userResponse in response)
                 {
-                    var role = await _userRoleRepository.GetAsync(userResponse.ROLE_ID, cancellationToken);
-                    userResponse.ROLE = role.ROLE;
+                    var role = await _userRoleRepository.GetByIdAsync(userResponse.RoleId, cancellationToken);
+                    userResponse.Role = role.Role;
                 }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ErrorResponseModel.NewError("user/get-all", ex));
             }
         }
         [HttpGet("{id}")]
@@ -63,17 +64,17 @@ namespace DnD.Api.Controllers
             try
             {
                 var user = await _userRepository.GetByIdAsync(id, cancellationToken);
-                if (user is null) return NotFound(ErrorResponseModel.NewError("user/fetch-one", "user not found"));
+                if (user is null) return NotFound(ErrorResponseModel.NewError("user/get-one", "user not found"));
 
-                var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
+                var userRole = await _userRoleRepository.GetByIdAsync(user.RoleId, cancellationToken);
                 var responseRepo = await _userRepository.GetByIdAsync(id, cancellationToken);
-                var response = _mapper.Map<Shared.Models.UserModel>(responseRepo);
-                response.ROLE = userRole.ROLE;
+                var response = _mapper.Map<UserModel>(responseRepo);
+                response.Role = userRole.Role;
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ErrorResponseModel.NewError("user/fetch-one", ex));
+                return BadRequest(ErrorResponseModel.NewError("user/get-one", ex));
             }
         }
 
@@ -85,10 +86,10 @@ namespace DnD.Api.Controllers
                 var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
                 if (user is null) return NotFound(ErrorResponseModel.NewError("user/profile", "user not found"));
 
-                var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID, cancellationToken);
+                var userRole = await _userRoleRepository.GetByIdAsync(user.RoleId, cancellationToken);
                 var responseRepo = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                var response = _mapper.Map<Shared.Models.UserModel>(responseRepo);
-                response.ROLE = userRole.ROLE;
+                var response = _mapper.Map<UserModel>(responseRepo);
+                response.Role = userRole.Role;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -97,22 +98,23 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles = "GAME MASTER")]
         public async Task<IActionResult> Insert(InsertUserRequestModel request, CancellationToken cancellationToken)
         {
             try
             {
                 var checkEmail = await _userRepository.CheckEmailAsync(request.Email, cancellationToken);
                 if (checkEmail) return BadRequest(ErrorResponseModel.NewError("user/insert", "email already exists"));
-                var newUser = new Data.Models.UserModel
+                var roles = await _userRoleRepository.GetAsync(cancellationToken);
+                var newUser = new UserModel
                 {
-                    ID = Guid.NewGuid().ToString(),
-                    CHARACTER_ID = request.CharacterId,
-                    NAME = request.Name,
-                    EMAIL = request.Email,
-                    PASSWORD = BCrypt.Net.BCrypt.HashPassword(request.Password)
+                    CharacterId = request.CharacterId,
+                    Name = request.Name,
+                    Email = request.Email,
+                    Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    RoleId = roles.Where(c => c.Role == "PLAYER").FirstOrDefault()!.Id
                 };
-                await _userRepository.InsertAsync(newUser, cancellationToken);
+                var mapUser = _mapper.Map<UserBson>(newUser);
+                await _userRepository.InsertAsync(mapUser, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
@@ -127,19 +129,20 @@ namespace DnD.Api.Controllers
             {
                 var findUser = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
                 if (findUser is null) return NotFound(ErrorResponseModel.NewError("user/update", "user not found"));
-                if (findUser.EMAIL != request.Email)
+                if (findUser.Email != request.Email)
                 {
                     var checkEmail = await _userRepository.CheckEmailAsync(request.Email, cancellationToken);
                     if (checkEmail) return BadRequest(ErrorResponseModel.NewError("user/update", "email already exists"));
                 }
-                var updateUser = new Data.Models.UserModel
+                var updateUser = new UserModel
                 {
-                    ID = request.Id,
-                    CHARACTER_ID = request.CharacterId,
-                    NAME = request.Name,
-                    EMAIL = request.Email,
+                    Id = request.Id,
+                    CharacterId = request.CharacterId,
+                    Name = request.Name,
+                    Email = request.Email,
                 };
-                await _userRepository.UpdateAsync(updateUser, cancellationToken);
+                var mapUser = _mapper.Map<UserBson>(updateUser);
+                await _userRepository.UpdateAsync(mapUser, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
@@ -159,8 +162,6 @@ namespace DnD.Api.Controllers
                 }
                 var user = await _userRepository.GetByIdAsync(id, cancellationToken);
                 if (user is null) return NotFound(ErrorResponseModel.NewError("user/change-password", "user not found"));
-                var isVerified = BCrypt.Net.BCrypt.Verify(request.OldPassword, user.PASSWORD);
-                if (!isVerified) return BadRequest(ErrorResponseModel.NewError("user/change-password", "old password does not match"));
                 await _userRepository.ChangePasswordAsync(id, BCrypt.Net.BCrypt.HashPassword(request.NewPassword), cancellationToken);
                 return Ok();
             }

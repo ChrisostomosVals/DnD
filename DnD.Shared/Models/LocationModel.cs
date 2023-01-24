@@ -8,18 +8,20 @@ namespace DnD.Shared.Models
     public class LocationModel
     {
         [JsonPropertyName("id")]
-        public int ID { get; set; }
+        public string Id { get; set; }
         [JsonPropertyName("x")]
-        public string X_AXIS { get; set; }
+        public string X { get; set; }
         [JsonPropertyName("y")]
-        public string Y_AXIS { get; set; }
+        public string Y { get; set; }
         [JsonPropertyName("date")]
-        public int DATE { get; set; }
+        public int Date { get; set; }
         [JsonPropertyName("time")]
-        public int TIME { get; set; }
+        public string Time { get; set; }
         [JsonPropertyName("year")]
-        public int YEAR { get; set; }
+        public int Year { get; set; }
         [JsonPropertyName("season")]
-        public string SEASON { get; set; }
+        public string Season { get; set; }
+        [JsonPropertyName("events")]
+        public List<string>? Events { get; set; }
     }
 }

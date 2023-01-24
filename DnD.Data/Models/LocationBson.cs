@@ -16,6 +16,8 @@ namespace DnD.Data.Models
         public string Y { get; set; }
         [BsonElement("date")]
         public int Date { get; set; }
+       [BsonElement("time")]
+        public string Time { get; set; }
         [BsonElement("year")]
         public int Year { get; set; }
         [BsonElement("season")]

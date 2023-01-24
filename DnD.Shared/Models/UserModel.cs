@@ -8,19 +8,18 @@ namespace DnD.Shared.Models
     public class UserModel
     {
         [JsonPropertyName("id")]
-        public string ID { get; set; }
-        [JsonPropertyName("roleId")]
-        public int ROLE_ID { get; set; }
-        [JsonPropertyName("role")]
-        public string ROLE { get; set; }
-        [JsonPropertyName("characterId")]
-        public string? CHARACTER_ID { get; set; }
-        [JsonPropertyName("name")]
-        public string? NAME { get; set; }
-        [JsonPropertyName("email")]
-        public string EMAIL { get; set; }
-        [JsonPropertyName("password")]
+        public string Id { get; set; }
         [JsonIgnore]
-        public string PASSWORD { get; set; }
+        public string RoleId { get; set; }
+        [JsonPropertyName("role")]
+        public string Role { get; set; }
+        [JsonPropertyName("characterId")]
+        public string? CharacterId { get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+        [JsonIgnore]
+        public string Password { get; set; }
     }
 }

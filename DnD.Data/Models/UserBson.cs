@@ -9,7 +9,7 @@ namespace DnD.Data.Models
     public class UserBson
     {
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [BsonElement("roleId")]
         public string RoleId { get; set; }
         [BsonElement("characterId")]

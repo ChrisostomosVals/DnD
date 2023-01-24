@@ -17,6 +17,6 @@ namespace DnD.Data.Models
         [BsonElement("description")]
         public string? Description { get; set; }
         [BsonElement("properties")]
-        public List<WorldObjectPropBson>? Properties { get; set; }
+        public IList<WorldObjectPropBson>? Properties { get; set; }
     }
 }

@@ -10,9 +10,9 @@ namespace DnD.Data.Models
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        [BsonElement("name")]
-        public string Name { get; set; }
         [BsonElement("categoryId")]
         public string CategoryId { get; set; }
+        [BsonElement("name")]
+        public string Name { get; set; }
     }
 }

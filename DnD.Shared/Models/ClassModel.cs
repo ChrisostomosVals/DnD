@@ -8,10 +8,10 @@ namespace DnD.Shared.Models
     public class ClassModel
     {
         [JsonPropertyName("id")]
-        public int ID { get; set; }
+        public string Id { get; set; }
         [JsonPropertyName("name")]
-        public string NAME { get; set; }
+        public string Name { get; set; }
         [JsonPropertyName("categoryId")]
-        public int CATEGORY_ID { get; set; }
+        public string CategoryId { get; set; }
     }
 }

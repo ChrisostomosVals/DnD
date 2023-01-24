@@ -1,7 +1,8 @@
-using DataAdapter.Sql;
+using DataAdapter.NoSql;
 using DnD.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -13,20 +14,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddSingleton<SqlAdapter>(new SqlAdapter(builder.Configuration.GetConnectionString("Connectionstring")));
-builder.Services.AddTransient<CharacterArsenalRepository>();
-builder.Services.AddTransient<CharacterGearRepository>();
-builder.Services.AddTransient<CharacterPropRepository>();
+var connection = new MongoDbConnection(builder.Configuration.GetConnectionString("Connectionstring"));
+connection.UseDatabase(builder.Configuration.GetValue<string>("Database"));
+builder.Services.AddSingleton<IMongoDbConnection>(connection);
 builder.Services.AddTransient<CharacterRepository>();
-builder.Services.AddTransient<CharacterSkillRepository>();
-builder.Services.AddTransient<SkillRepository>();
 builder.Services.AddTransient<ClassCategoryRepository>();
 builder.Services.AddTransient<ClassRepository>();
 builder.Services.AddTransient<WorldObjectRepository>();
-builder.Services.AddTransient<WorldObjectPropRepository>();
-builder.Services.AddTransient<WorldMiscRepository>();
 builder.Services.AddTransient<LocationRepository>();
-builder.Services.AddTransient<LocationEventRepository>();
 builder.Services.AddTransient<RaceRepository>();
 builder.Services.AddTransient<RaceCategoryRepository>();
 builder.Services.AddTransient<UserRepository>();
@@ -37,11 +32,12 @@ builder.Services.AddTransient<UserRoleRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
     {
-        config.Authority = "https://localhost:6000";
+        config.Authority = "http://localhost:5000";
         config.RequireHttpsMetadata = false;
         config.TokenValidationParameters.ValidateActor = false;
         config.TokenValidationParameters.ValidateAudience = false;
         config.TokenValidationParameters.ValidateIssuer = false;
+        IdentityModelEventSource.ShowPII = true;
     });
 builder.Services.AddAuthorization();
 builder.Services.AddSwaggerGen(options =>

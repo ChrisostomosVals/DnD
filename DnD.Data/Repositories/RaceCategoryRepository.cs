@@ -1,6 +1,6 @@
-﻿using DataAdapter.Sql;
-using DnD.Data.Internal;
+﻿using DataAdapter.NoSql;
 using DnD.Data.Models;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,18 +11,24 @@ namespace DnD.Data.Repositories
 {
     public class RaceCategoryRepository
     {
-        private readonly SqlAdapter _adapter;
-        public RaceCategoryRepository(SqlAdapter adapter)
+        private readonly IMongoDbConnection _connection;
+        public RaceCategoryRepository(IMongoDbConnection connection)
         {
-            _adapter = adapter;
+            _connection = connection;
         }
-        public async Task<IEnumerable<RaceCategoryModel>> GetAsync(CancellationToken cancellationToken) => await _adapter.FindAsync<RaceCategoryModel, dynamic>(
-           Procedures.RaceCategory.Get,
-           new { },
-           cancellationToken);
-        public async Task<RaceCategoryModel> GetByIdAsync(int id, CancellationToken cancellationToken) => await _adapter.FindOneAsync<RaceCategoryModel, dynamic>(
-            Procedures.RaceCategory.GetById,
-            new { id },
-            cancellationToken);
+        public async Task<IEnumerable<RaceCategoryBson>> GetAsync(CancellationToken cancellationToken = default)
+        {
+            var raceCategories = _connection.Database.GetCollection<RaceCategoryBson>("race_categories");
+            var filter = new FilterDefinitionBuilder<RaceCategoryBson>().Empty;
+            var cursor = await raceCategories.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task<RaceCategoryBson> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var raceCategories = _connection.Database.GetCollection<RaceCategoryBson>("race_categories");
+            var filter = new FilterDefinitionBuilder<RaceCategoryBson>().Eq(c => c.Id, id);
+            var cursor = await raceCategories.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

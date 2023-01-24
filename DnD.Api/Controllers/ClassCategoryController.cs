@@ -36,7 +36,7 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
         {
             try
             {

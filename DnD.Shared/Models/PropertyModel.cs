@@ -5,11 +5,13 @@ using System.Text.Json.Serialization;
 
 namespace DnD.Shared.Models
 {
-    public class WorldObjectPropModel
+    public class PropertyModel
     {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
         [JsonPropertyName("value")]
         public string Value { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
     }
 }

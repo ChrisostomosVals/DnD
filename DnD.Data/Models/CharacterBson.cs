@@ -9,7 +9,7 @@ namespace DnD.Data.Models
     public class CharacterBson
     {
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [BsonElement("name")]
         public string Name { get; set; }
         [BsonElement("classId")]
@@ -19,19 +19,19 @@ namespace DnD.Data.Models
         [BsonElement("type")]
         public string Type { get; set; }
         [BsonElement("gear")]
-        public List<GearBson>? Gear { get; set; }
+        public IList<GearBson>? Gear { get; set; }
         [BsonElement("arsenal")]
-        public List<ArsenalBson>? Arsenal { get; set; }
+        public IList<ArsenalBson>? Arsenal { get; set; }
         [BsonElement("skills")]
-        public List<SkillBson>? Skills { get; set; }
+        public IList<SkillBson>? Skills { get; set; }
         [BsonElement("feats")]
-        public List<string>? Feats { get; set; }
+        public IList<string>? Feats { get; set; }
         [BsonElement("specialAbilities")]
-        public List<string>? SpecialAbilities { get; set; }
+        public IList<string>? SpecialAbilities { get; set; }
         [BsonElement("stats")]
-        public List<StatBson>? Stats { get; set; }
+        public IList<StatBson>? Stats { get; set; }
         [BsonElement("properties")]
-        public List<PropertyBson>? Properties { get; set; }
+        public IList<PropertyBson>? Properties { get; set; }
         [BsonElement("visible")]
         public bool Visible { get; set; }
     }

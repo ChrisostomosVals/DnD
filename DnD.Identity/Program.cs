@@ -1,4 +1,4 @@
-using DataAdapter.Sql;
+using DataAdapter.NoSql;
 using DnD.Data.Repositories;
 using DnD.Identity.Stores;
 using IdentityServer4.Stores;
@@ -6,7 +6,9 @@ using IdentityServer4.Stores;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<SqlAdapter>(new SqlAdapter(builder.Configuration.GetConnectionString("Connectionstring"), "MSSQL"));
+var connection = new MongoDbConnection(builder.Configuration.GetConnectionString("Connectionstring"));
+connection.UseDatabase(builder.Configuration.GetValue<string>("Database"));
+builder.Services.AddSingleton<IMongoDbConnection>(connection);
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<UserRoleRepository>();
 builder.Services.AddControllers();
@@ -26,7 +28,7 @@ if (app.Environment.IsDevelopment())
 {
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseIdentityServer();
 app.UseAuthorization();
 

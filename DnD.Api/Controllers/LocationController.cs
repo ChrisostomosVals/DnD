@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DnD.Api.CustomAttributes;
+using DnD.Data.Models;
 using DnD.Data.Repositories;
 using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -31,13 +32,13 @@ namespace DnD.Api.Controllers
                 {
                     var responseRepo = await _locationRepository.GetLatestAsync(cancellationToken);
                     if (responseRepo == null) return NotFound(ErrorResponseModel.NewError("location/get-latest", "location not found"));
-                    var response = _mapper.Map<Shared.Models.LocationModel>(responseRepo);
+                    var response = _mapper.Map<LocationModel>(responseRepo);
                     return Ok(response);
                 }
                else
                 {
                     var responseRepo = await _locationRepository.GetAsync(cancellationToken);
-                    var response = _mapper.Map<IEnumerable<Shared.Models.LocationModel>>(responseRepo);
+                    var response = _mapper.Map<IEnumerable<LocationModel>>(responseRepo);
                     return Ok(response);
                 }
             }
@@ -47,14 +48,14 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
         {
             try
             {
 
                 var responseRepo = await _locationRepository.GetByIdAsync(id, cancellationToken);
                 if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("location/get-one", "location not found"));
-                var response = _mapper.Map<Shared.Models.LocationModel>(responseRepo);
+                var response = _mapper.Map<LocationModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -67,16 +68,17 @@ namespace DnD.Api.Controllers
         {
             try
             {
-                var newLocation = new Shared.Models.LocationModel
+                var newLocation = new LocationModel
                 {
-                    X_AXIS = request.X,
-                    Y_AXIS = request.Y,
-                    DATE = request.Date,
-                    TIME = request.Time,
-                    YEAR = request.Year,
-                    SEASON = request.Season
+                    X = request.X,
+                    Y = request.Y,
+                    Date = request.Date,
+                    Time = request.Time,
+                    Year = request.Year,
+                    Season = request.Season,
+                    Events = request.Events is null ? new List<string>() : request.Events
                 };
-                var newLocationMap = _mapper.Map<Data.Models.LocationModel>(newLocation);
+                var newLocationMap = _mapper.Map<LocationBson>(newLocation);
                 await _locationRepository.InsertAsync(newLocationMap, cancellationToken); 
                 return Ok();
             }
@@ -92,17 +94,18 @@ namespace DnD.Api.Controllers
             {
                 var findLocation = await _locationRepository.GetByIdAsync(request.Id, cancellationToken);
                 if (findLocation is null) return NotFound(ErrorResponseModel.NewError("location/update", "location not found"));
-                var newLocation = new Shared.Models.LocationModel
+                var newLocation = new LocationModel
                 {
-                    ID = request.Id,
-                    X_AXIS = request.X,
-                    Y_AXIS = request.Y,
-                    DATE = request.Date,
-                    TIME = request.Time,
-                    YEAR = request.Year,
-                    SEASON = request.Season
+                    Id = request.Id,
+                    X = request.X,
+                    Y = request.Y,
+                    Date = request.Date,
+                    Time = request.Time,
+                    Year = request.Year,
+                    Season = request.Season,
+                    Events = request.Events is null ? new List<string>() : request.Events
                 };
-                var newLocationMap = _mapper.Map<Data.Models.LocationModel>(newLocation);
+                var newLocationMap = _mapper.Map<LocationBson>(newLocation);
                 await _locationRepository.UpdateAsync(newLocationMap, cancellationToken);
                 return Ok();
             }
@@ -112,7 +115,7 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpDelete("{id}/delete")]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             try
             {

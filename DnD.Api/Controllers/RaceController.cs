@@ -14,9 +14,9 @@ namespace DnD.Api.Controllers
     {
         private readonly RaceRepository _raceRepository;
         private readonly RaceCategoryRepository _raceCategoryRepository;
-        private readonly ILogger<ClassController> _logger;
+        private readonly ILogger<RaceController> _logger;
         private readonly IMapper _mapper;
-        public RaceController(ILogger<ClassController> logger, RaceRepository raceRepository, IMapper mapper, RaceCategoryRepository raceCategoryRepository)
+        public RaceController(ILogger<RaceController> logger, RaceRepository raceRepository, IMapper mapper, RaceCategoryRepository raceCategoryRepository)
         {
             _logger = logger;
             _raceRepository = raceRepository;
@@ -29,7 +29,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var responseRepo = await _raceRepository.GetAsync(cancellationToken);
-                var response = _mapper.Map<IEnumerable<Shared.Models.RaceModel>>(responseRepo);
+                var response = _mapper.Map<IEnumerable<RaceModel>>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -38,13 +38,13 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
         {
             try
             {
                 var responseRepo = await _raceRepository.GetByIdAsync(id, cancellationToken);
                 if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("race/get-one", "race not found"));
-                var response = _mapper.Map<Shared.Models.RaceModel>(responseRepo);
+                var response = _mapper.Map<RaceModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -53,14 +53,14 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpGet("{categoryId}/category")]
-        public async Task<IActionResult> GetByCategoryId(int categoryId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetByCategoryId(string categoryId, CancellationToken cancellationToken)
         {
             try
             {
                 var findCategory = await _raceCategoryRepository.GetByIdAsync(categoryId, cancellationToken);
                 if (findCategory is null) return NotFound(ErrorResponseModel.NewError("race/get-by-category", "category not found"));
                 var responseRepo = await _raceRepository.GetByCategoryIdAsync(categoryId, cancellationToken);
-                var response = _mapper.Map<IEnumerable<Shared.Models.RaceModel>>(responseRepo);
+                var response = _mapper.Map<IEnumerable<RaceModel>>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)

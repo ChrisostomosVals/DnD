@@ -8,12 +8,14 @@ namespace DnD.Shared.Models
     public class WorldObjectModel
     {
         [JsonPropertyName("id")]
-        public int ID { get; set; }
+        public string Id { get; set; }
         [JsonPropertyName("name")]
-        public string NAME { get; set; }
+        public string Name { get; set; }
         [JsonPropertyName("type")]
-        public string TYPE { get; set; }
+        public string Type { get; set; }
         [JsonPropertyName("description")]
-        public string? DESCRIPTION { get; set; }
+        public string? Description { get; set; }
+        [JsonPropertyName("properties")]
+        public List<WorldObjectPropModel>? Properties { get; set; }
     }
 }

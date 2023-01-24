@@ -27,13 +27,13 @@ namespace DnD.Identity.Stores
                 if (subjectClaim != null)
                 {
                     var user = await _userRepository.GetByIdAsync(subjectClaim.Value);
-                    var userRole = await _userRoleRepository.GetAsync(user.ROLE_ID);
-                    context.IssuedClaims.AddRange(new Collection<Claim> { new Claim("role", userRole.ROLE) });
-                    if (user.NAME is not null)
+                    var userRole = await _userRoleRepository.GetByIdAsync(user.RoleId);
+                    context.IssuedClaims.AddRange(new Collection<Claim> { new Claim("role", userRole.Role) });
+                    if (user.Name is not null)
                     {
-                        context.IssuedClaims.Add(new Claim(JwtClaimTypes.PreferredUserName, user.NAME));
+                        context.IssuedClaims.Add(new Claim(JwtClaimTypes.PreferredUserName, user.Name));
                     }
-                    context.IssuedClaims.Add(new Claim(JwtClaimTypes.Email, user.EMAIL));
+                    context.IssuedClaims.Add(new Claim(JwtClaimTypes.Email, user.Email));
                     context.IssuedClaims.Add(new Claim(JwtClaimTypes.EmailVerified, "true"));
                 }
             }

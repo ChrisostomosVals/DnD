@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DnD.Api.CustomAttributes;
+using DnD.Data.Models;
 using DnD.Data.Repositories;
 using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,7 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
         {
             try
             {
@@ -56,14 +57,15 @@ namespace DnD.Api.Controllers
         {
             try
             {
-                var newItem = new Shared.Models.WorldObjectModel
+                var newItem = new WorldObjectModel
                 {
-                    NAME = request.Name,
-                    TYPE = request.Type,
-                    DESCRIPTION = request.Description
+                    Name = request.Name,
+                    Type = request.Type,
+                    Description = request.Description,
+                    Properties = request.Properties is null ? new List<WorldObjectPropModel>() : request.Properties
                 };
-                var newItemMap = _mapper.Map<Data.Models.WorldObjectModel>(newItem);
-                await _worldObjectRepository.CreateAsync(newItemMap, cancellationToken);
+                var newItemMap = _mapper.Map<WorldObjectBson>(newItem);
+                await _worldObjectRepository.InsertAsync(newItemMap, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
@@ -78,15 +80,16 @@ namespace DnD.Api.Controllers
             {
                 var findItem = await _worldObjectRepository.GetByIdAsync(request.Id, cancellationToken);
                 if (findItem is null) return NotFound(ErrorResponseModel.NewError("world-object/update", "Item not found"));
-                var newItem = new Shared.Models.WorldObjectModel
+                var newItem = new WorldObjectModel
                 {
-                    ID = request.Id,
-                    NAME = request.Name,
-                    TYPE = request.Type,
-                    DESCRIPTION = request.Description
+                    Id = request.Id,
+                    Name = request.Name,
+                    Type = request.Type,
+                    Description = request.Description,
+                    Properties = request.Properties is null ? new List<WorldObjectPropModel>() : request.Properties
                 };
-                var newItemMap = _mapper.Map<Data.Models.WorldObjectModel>(newItem);
-                await _worldObjectRepository.Update(newItemMap, cancellationToken);
+                var newItemMap = _mapper.Map<WorldObjectBson>(newItem);
+                await _worldObjectRepository.UpdateAsync(newItemMap, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
@@ -95,13 +98,13 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpDelete("{id}/delete")]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             try
             {
                 var findItem = await _worldObjectRepository.GetByIdAsync(id, cancellationToken);
                 if (findItem is null) return NotFound(ErrorResponseModel.NewError("world-object/delete", "Item not found"));
-                await _worldObjectRepository.Delete(id, cancellationToken);
+                await _worldObjectRepository.DeleteAsync(id, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)

@@ -1,5 +1,8 @@
-﻿using DataAdapter.Sql;
+﻿using DataAdapter.NoSql;
+using DataAdapter.Sql;
 using DnD.Data.Internal;
+using DnD.Data.Models;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,14 +13,24 @@ namespace DnD.Data.Repositories
 {
     public class UserRoleRepository
     {
-        private readonly SqlAdapter _adapter;
-        public UserRoleRepository(SqlAdapter adapter)
+        private readonly IMongoDbConnection _connection;
+        public UserRoleRepository(IMongoDbConnection connection)
         {
-            _adapter = adapter;
+            _connection = connection;
         }
-        public async Task<Data.Models.UserRoleModel> GetAsync(int id, CancellationToken cancellationToken=default) => await _adapter.FindOneAsync<Data.Models.UserRoleModel, dynamic>(
-            Procedures.UserRole.Get,
-            new { id },
-            cancellationToken);
+        public async Task<IEnumerable<UserRoleBson>> GetAsync(CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<UserRoleBson>("user_roles");
+            var filter = new FilterDefinitionBuilder<UserRoleBson>().Empty;
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.ToListAsync(cancellationToken);
+        }
+        public async Task<UserRoleBson> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<UserRoleBson>("user_roles");
+            var filter = new FilterDefinitionBuilder<UserRoleBson>().Eq(c => c.Id, id);
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            return await cursor.FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }
