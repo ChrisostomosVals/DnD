@@ -234,6 +234,8 @@ namespace DnD.Api.Controllers
         {
             try
             {
+                if(request.Gear is not null)
+                    foreach (var item in request.Gear) item.Id = Guid.NewGuid().ToString();
                 var newCharacter = new CharacterModel
                 {
                     Name = request.Name,
@@ -249,6 +251,7 @@ namespace DnD.Api.Controllers
                     Properties = request.Properties is null ? new List<PropertyModel>() : request.Properties,
                     Visible = request.Visible,
                 };
+               
                 var newCharacterMapped = _mapper.Map<CharacterBson>(newCharacter);
                 await _characterRepository.CreateAsync(newCharacterMapped, cancellationToken);
                 return Ok();
@@ -308,6 +311,26 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("character/update-gear", ex));
             }
         }
+        //[HttpPut("gear/transfer")]
+        //public async Task<IActionResult> Transfer(TransferGearItemRequestModel request, CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+        //        var requestCharacter = await _characterRepository.GetByIdAsync(user.CharacterId, cancellationToken);
+        //        if (requestCharacter is null) return BadRequest(ErrorResponseModel.NewError("character/tranfer-gear", "uset not bound to a character"));
+        //        var findCharacter = await _characterRepository.GetByIdAsync(request.CharacterId, cancellationToken);
+        //        if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/tranfer-gear", "character not found"));
+        //        if(requestCharacter.f)
+        //        var newGearMapped = _mapper.Map<IList<GearBson>>(request.UpdateDefinition);
+        //        await _characterRepository.UpdateGearAsync(request.Id, newGearMapped, cancellationToken);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ErrorResponseModel.NewError("character/update-gear", ex));
+        //    }
+        //}
         [HttpPut("arsenal")]
         public async Task<IActionResult> UpdateArsenal (UpdateCharacterDefinitionRequestModel<ArsenalModel> request, CancellationToken cancellationToken)
         {

@@ -14,7 +14,7 @@ namespace DnD.Data.Models
         public double Quantity { get; set; }
         [BsonElement("weight")]
         public string Weight { get; set; }
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("id")]
         public string Id { get; set; }
     }
 }

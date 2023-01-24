@@ -14,6 +14,6 @@ namespace DnD.Shared.Models
         [JsonPropertyName("weight")]
         public string Weight { get; set; }
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
     }
 }
