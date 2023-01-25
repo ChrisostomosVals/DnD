@@ -62,13 +62,13 @@ namespace DnD.Data.Repositories
             var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
             return await cursor.ToListAsync(cancellationToken);
         }
-        public async Task<GearBson> GetMoneyAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<GearBson> GetGearItemAsync(string id, string gearId, CancellationToken cancellationToken = default)
         {
             var characters = _connection.Database.GetCollection<CharacterBson>("characters");
             var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
             var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
             var character = await cursor.FirstOrDefaultAsync(cancellationToken);
-            return character.Gear.FirstOrDefault(g => g.Name == "Money");
+            return character.Gear.FirstOrDefault(g => g.Id == gearId);
         }
         public async Task<IEnumerable<GearBson>?> GetGearAsync(string id, CancellationToken cancellationToken = default)
         {
@@ -118,7 +118,14 @@ namespace DnD.Data.Repositories
             var character = await cursor.FirstOrDefaultAsync(cancellationToken);
             return character.SpecialAbilities;
         }
-
+        public async Task<IEnumerable<StatBson>?> GetStatsAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            var character = await cursor.FirstOrDefaultAsync(cancellationToken);
+            return character.Stats;
+        }
         public async Task CreateAsync(CharacterBson character, CancellationToken cancellationToken = default)        {
             character.Id = null;
             var characters = _connection.Database.GetCollection<CharacterBson>("characters");

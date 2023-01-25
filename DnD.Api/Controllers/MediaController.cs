@@ -31,7 +31,7 @@ namespace DnD.Api.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload([FromForm] UploadMediaModel request)
+        public async Task<IActionResult> Upload([FromForm] UploadMediaRequestModel request)
         {
             try
             {

@@ -1,6 +1,4 @@
-export default interface UpdateWorldObjectRequestModel {
-    id: number;
-    name: string;
-    type: string;
-    description: string | null;
+import CreateWorldObjectRequestModel from "./CreateWorldObjectRequestModel";
+export default interface UpdateWorldObjectRequestModel extends CreateWorldObjectRequestModel {
+    id: string;
 }

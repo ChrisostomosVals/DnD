@@ -1,4 +1,4 @@
 export default interface RaceCategoryModel {
-    id: number;
+    id: string;
     name: string;
 }

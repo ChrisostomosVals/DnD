@@ -13,7 +13,7 @@ namespace DnD.Data.Models
         [BsonElement("quantity")]
         public double Quantity { get; set; }
         [BsonElement("weight")]
-        public string Weight { get; set; }
+        public string? Weight { get; set; }
         [BsonElement("id")]
         public string Id { get; set; }
     }

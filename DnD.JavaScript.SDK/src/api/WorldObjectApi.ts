@@ -35,7 +35,7 @@ export default class WorldObjectApi{
             return new ApiResponseModel<WorldObjectModel[]>(null, ErrorResponseModel.NewError("WorldObjectApi.GetAsync().Exception", error));;
         }
     }
-    public static async GetByIdAsync(token:string, url: string, id: number) : Promise<ApiResponseModel<WorldObjectModel>> {
+    public static async GetByIdAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<WorldObjectModel>> {
         try {
             const uri = `${url}/${worldObjectEndpoint}/${id}`;
             const response = await HttpClient.getAsync(token, uri)
@@ -108,7 +108,7 @@ export default class WorldObjectApi{
             return new ApiResponseModel<void>(null, ErrorResponseModel.NewError("WorldObjectApi.UpdateAsync().Exception", error));;
         }
     }
-    public static async DeleteAsync(token:string, url: string, id: number) : Promise<ApiResponseModel<void>> {
+    public static async DeleteAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<void>> {
         try {
             const uri = `${url}/${worldObjectEndpoint}/${id}/delete`;
             const response = await HttpClient.deleteAsync(token, uri)

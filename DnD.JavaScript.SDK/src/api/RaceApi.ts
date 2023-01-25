@@ -33,7 +33,7 @@ export default class RaceApi{
             return new ApiResponseModel<RaceModel[]>(null, ErrorResponseModel.NewError("RaceApi.GetAsync().Exception", error));;
         }
     }
-    public static async GetByIdAsync(token:string, url: string, id: number) : Promise<ApiResponseModel<RaceModel>> {
+    public static async GetByIdAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<RaceModel>> {
         try {
             const uri = `${url}/${raceEndpoint}/${id}`;
             const response = await HttpClient.getAsync(token, uri)
@@ -57,7 +57,7 @@ export default class RaceApi{
             return new ApiResponseModel<RaceModel>(null, ErrorResponseModel.NewError("RaceApi.GetByIdAsync().Exception", error));;
         }
     }
-    public static async GetByCategoryIdAsync(token:string, url: string, categoryId: number) : Promise<ApiResponseModel<RaceModel[]>> {
+    public static async GetByCategoryIdAsync(token:string, url: string, categoryId: string) : Promise<ApiResponseModel<RaceModel[]>> {
         try {
             const uri = `${url}/${raceEndpoint}/${categoryId}/category`;
             const response = await HttpClient.getAsync(token, uri)

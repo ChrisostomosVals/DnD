@@ -7,5 +7,5 @@ export default class LocationApi {
     static GetByIdAsync(token: string, url: string, id: number): Promise<ApiResponseModel<LocationModel>>;
     static CreateAsync(token: string, url: string, request: InsertLocationRequestModel): Promise<ApiResponseModel<void>>;
     static UpdateAsync(token: string, url: string, request: UpdateLocationRequestModel): Promise<ApiResponseModel<void>>;
-    static DeleteAsync(token: string, url: string, id: number): Promise<ApiResponseModel<void>>;
+    static DeleteAsync(token: string, url: string, id: string): Promise<ApiResponseModel<void>>;
 }

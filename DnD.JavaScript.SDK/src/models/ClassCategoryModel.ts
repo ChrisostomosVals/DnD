@@ -1,4 +1,4 @@
 export default interface ClassCategoryModel {
-    id: number;
+    id: string;
     name: string;
 }

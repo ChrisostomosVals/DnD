@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper;
 using DnD.Data.Repositories;
 using DnD.Data;
 using DnD.Shared;
@@ -11,6 +12,7 @@ using System.Text.Json;
 using System.Reflection;
 using DnD.Data.Models;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DnD.Api.Controllers
 {
@@ -64,7 +66,7 @@ namespace DnD.Api.Controllers
             {
                 var responseRepo = await _characterRepository.GetByIdAsync(id, cancellationToken);
                 if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("character/get-one", "character not found"));
-                var response = _mapper.Map<Shared.Models.CharacterModel>(responseRepo);
+                var response = _mapper.Map<CharacterModel>(responseRepo);
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
@@ -76,27 +78,6 @@ namespace DnD.Api.Controllers
                         }
                     }
                 }
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponseModel.NewError("character/get-one", ex));
-            }
-        }
-        [HttpGet("{id}/money")]
-        public async Task<IActionResult> GetMoney(string id, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
-                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/get-gear", "character not found"));
-                if (!User.IsInRole("GAME MASTER"))
-                {
-                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/get-gear", "You do not have permission for this action"));
-                }
-                var gear = await _characterRepository.GetMoneyAsync(findCharacter.Id!, cancellationToken);
-                var response = _mapper.Map<GearModel>(gear);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -123,6 +104,28 @@ namespace DnD.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("character/get-gear", ex));
+            }
+        }
+        [HttpGet("{id}/gear/{gearId}")]
+        public async Task<IActionResult> GetGearItem(string id, string gearId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/get-gear-one", "character not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/get-gear-one", "You do not have permission for this action"));
+                }
+                var gear = await _characterRepository.GetGearItemAsync(findCharacter.Id!, gearId, cancellationToken);
+                if (gear is null) return NotFound(ErrorResponseModel.NewError("character/get-gear-one", "gear item not found"));
+                var response = _mapper.Map<GearModel>(gear);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/get-one", ex));
             }
         }
         [HttpGet("{id}/arsenal")]
@@ -228,6 +231,27 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("character/get-specialAbilities", ex));
             }
         }
+        [HttpGet("{id}/stats")]
+        public async Task<IActionResult> GetStats(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/get-stats", "character not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/get-stats", "You do not have permission for this action"));
+                }
+                var stats = await _characterRepository.GetStatsAsync(findCharacter.Id!, cancellationToken);
+                var response = _mapper.Map<IEnumerable<StatModel>>(stats);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/get-stats", ex));
+            }
+        }
         [HttpPost]
         [Authorize(Roles = ("GAME MASTER"))]
         public async Task<IActionResult> Create(CreateCharacterRequestModel request, CancellationToken cancellationToken)
@@ -302,6 +326,18 @@ namespace DnD.Api.Controllers
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
                     if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-gear", "You do not have permission for this action"));
                 }
+                if(findCharacter.Gear is not null)
+                {
+                    foreach (var item in request.UpdateDefinition)
+                    {
+                        var findItem = findCharacter.Gear.FirstOrDefault(g => g.Name == item.Name);
+                        if (findItem is not null)
+                        {
+                            item.Quantity += findItem.Quantity;
+                        }
+                    }
+                }
+                
                 var newGearMapped = _mapper.Map<IList<GearBson>>(request.UpdateDefinition);
                 await _characterRepository.UpdateGearAsync(request.Id, newGearMapped, cancellationToken);
                 return Ok();
@@ -311,49 +347,212 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("character/update-gear", ex));
             }
         }
-        //[HttpPut("gear/transfer")]
-        //public async Task<IActionResult> Transfer(TransferGearItemRequestModel request, CancellationToken cancellationToken)
-        //{
-        //    try
-        //    {
-        //        var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-        //        var requestCharacter = await _characterRepository.GetByIdAsync(user.CharacterId, cancellationToken);
-        //        if (requestCharacter is null) return BadRequest(ErrorResponseModel.NewError("character/tranfer-gear", "uset not bound to a character"));
-        //        var findCharacter = await _characterRepository.GetByIdAsync(request.CharacterId, cancellationToken);
-        //        if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/tranfer-gear", "character not found"));
-        //        if(requestCharacter.f)
-        //        var newGearMapped = _mapper.Map<IList<GearBson>>(request.UpdateDefinition);
-        //        await _characterRepository.UpdateGearAsync(request.Id, newGearMapped, cancellationToken);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ErrorResponseModel.NewError("character/update-gear", ex));
-        //    }
-        //}
-        [HttpPut("arsenal")]
-        public async Task<IActionResult> UpdateArsenal (UpdateCharacterDefinitionRequestModel<ArsenalModel> request, CancellationToken cancellationToken)
+        [HttpPut("gear/money/add")]
+        public async Task<IActionResult> AddMoney(UpdateCharacterMoneyRequestModel request, CancellationToken cancellationToken)
         {
             try
             {
                 var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/update-arsenal", "character not found"));
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/money-add", "character not found"));
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-arsenal", "You do not have permission for this action"));
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/money-add", "You do not have permission for this action"));
                 }
-                var newArsenalMapped = _mapper.Map<IList<ArsenalBson>>(request.UpdateDefinition);
-                await _characterRepository.UpdateArsenalAsync(request.Id, newArsenalMapped, cancellationToken);
+                if (!findCharacter.Gear.IsNullOrEmpty())
+                {
+                   var findMoney = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
+                   var checkMoney = findCharacter.Gear!.FirstOrDefault(g => g.Name == "Money");
+                   if(findMoney is not null)
+                    {
+                        findCharacter.Gear!.FirstOrDefault(g => g.Id == findMoney.Id)!.Quantity += request.Quantity;
+                    }
+                   else if (checkMoney is not null)
+                    {
+                        findCharacter.Gear!.FirstOrDefault(g => g.Name == "Money")!.Quantity += request.Quantity;
+                    }
+                    else
+                    {
+                        findCharacter.Gear!.Add(new GearBson
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = "Money",
+                            Quantity = request.Quantity
+                        });
+                    }
+                }
+                else
+                {
+                    findCharacter.Gear = new List<GearBson>
+                    {
+                        new GearBson
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name = "Money",
+                            Quantity = request.Quantity
+                        }
+                    };
+                }
+
+                await _characterRepository.UpdateGearAsync(request.Id, findCharacter.Gear!, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ErrorResponseModel.NewError("character/update-arsenal", ex));
+                return BadRequest(ErrorResponseModel.NewError("character/money-add", ex));
+            }
+        }
+        [HttpPut("gear/money/remove")]
+        public async Task<IActionResult> RemoveMoney(UpdateCharacterMoneyRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/money-remove", "character not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/money-remove", "You do not have permission for this action"));
+                }
+                if (findCharacter.Gear.IsNullOrEmpty()) return NotFound(ErrorResponseModel.NewError("character/money-remove", "no gear found"));
+                var findMoney = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
+                if(findMoney is null) return NotFound(ErrorResponseModel.NewError("character/money-remove", "no money found"));
+                if (findMoney.Quantity < request.Quantity) return BadRequest(ErrorResponseModel.NewError("character/update-gear", "not enough money"));
+                findCharacter.Gear!.FirstOrDefault(g => g.Id == findMoney.Id)!.Quantity -= request.Quantity;
+                await _characterRepository.UpdateGearAsync(request.Id, findCharacter.Gear!, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/update-gear", ex));
+            }
+        }
+        [HttpPut("gear/transfer")]
+        public async Task<IActionResult> TransferGear(TransferGearItemRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                var requestCharacter = await _characterRepository.GetByIdAsync(user.CharacterId, cancellationToken);
+                if (requestCharacter is null) return BadRequest(ErrorResponseModel.NewError("character/tranfer-gear", "uset not bound to a character"));
+                var findCharacter = await _characterRepository.GetByIdAsync(request.CharacterId, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/tranfer-gear", "character not found"));
+                if (requestCharacter.Gear.IsNullOrEmpty()) return NotFound(ErrorResponseModel.NewError("character/tranfer-gear", "character gear not found"));
+                var findItem = await _characterRepository.GetGearItemAsync(requestCharacter.Id!, request.GearId, cancellationToken);
+                if (findItem is null) return NotFound(ErrorResponseModel.NewError("character/tranfer-gear", "item not found"));
+                if (findItem.Quantity < request.Quantity) return BadRequest(ErrorResponseModel.NewError("character/tranfer-gear", "not enought items"));
+                if (findItem.Quantity == request.Quantity) requestCharacter.Gear!.Remove(findItem);
+                else requestCharacter.Gear!.FirstOrDefault(g => g.Id == findItem.Id)!.Quantity -= request.Quantity;
+                if (findCharacter.Gear.IsNullOrEmpty())
+                {
+                    findCharacter.Gear = new List<GearBson>
+                    {
+                        new GearBson
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Name =findItem.Name,
+                            Quantity = request.Quantity
+                        }
+                    };
+                }
+                else
+                {
+                    if (findCharacter.Gear!.FirstOrDefault(g => g.Name == findItem.Name) is null) findCharacter.Gear!.Add(new GearBson
+                    {
+                        Id = request.GearId,
+                        Name = findItem.Name,
+                        Quantity = request.Quantity
+                    });
+                    else findCharacter.Gear!.FirstOrDefault(g => g.Name == findItem.Name)!.Quantity += request.Quantity;
+                }
+                await _characterRepository.UpdateGearAsync(findCharacter.Id!, findCharacter.Gear!, cancellationToken);
+                await _characterRepository.UpdateGearAsync(requestCharacter.Id!, requestCharacter.Gear!, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/tranfer-gear", ex));
+            }
+        }
+        [HttpPut("arsenal/add")]
+        public async Task<IActionResult> EquipItem(UpdateCharacterArsenalRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "character not found"));
+                var findGear = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
+                if (findGear is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "gear item not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/add-arsenal", "You do not have permission for this action"));
+                }
+                if (!findCharacter.Arsenal.IsNullOrEmpty())
+                {
+                    var checkExistingArsenal = findCharacter.Arsenal!.Where(a => a.GearId == request.GearId);
+                    if (checkExistingArsenal.Count() >= findGear.Quantity) return BadRequest(ErrorResponseModel.NewError("character/add-arsenal", "items are already equipped"));
+                    findCharacter.Arsenal!.Add(new ArsenalBson
+                    {
+                        GearId = request.GearId,
+                        Type = request.Type,
+                        Range = request.Range,
+                        AttackBonus = request.AttackBonus,
+                        Critical = request.Critical,
+                        Damage = request.Damage
+                    });
+                }
+                else
+                {
+                    findCharacter.Arsenal = new List<ArsenalBson>
+                    {
+                        new ArsenalBson
+                        {
+                            GearId = request.GearId,
+                            Type = request.Type,
+                            Range = request.Range,
+                            AttackBonus = request.AttackBonus,
+                            Critical = request.Critical,
+                            Damage = request.Damage
+                        }
+                    };
+                }
+                await _characterRepository.UpdateArsenalAsync(request.Id, findCharacter.Arsenal, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/add-arsenal", ex));
+            }
+        }
+        [HttpPut("arsenal/remove")]
+        public async Task<IActionResult> UnEquipItem(UpdateCharacterArsenalRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "character not found"));
+                var findGear = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
+                if (findGear is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "gear item not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/add-arsenal", "You do not have permission for this action"));
+                }
+                if (findCharacter.Arsenal.IsNullOrEmpty()) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "inventory is empty"));
+                var findArsenal = findCharacter.Arsenal!.FirstOrDefault(a => a.GearId == request.GearId);
+                if (findArsenal is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "item does not exist in inventory"));
+                findCharacter.Arsenal!.Remove(findArsenal);
+                await _characterRepository.UpdateArsenalAsync(request.Id, findCharacter.Arsenal, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/add-arsenal", ex));
             }
         }
         [HttpPut("skills")]
-        public async Task<IActionResult> UpdateArsenal(UpdateCharacterDefinitionRequestModel<SkillModel> request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateSkills(UpdateCharacterDefinitionRequestModel<SkillModel> request, CancellationToken cancellationToken)
         {
             try
             {
@@ -416,7 +615,7 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpPut("stats")]
-        public async Task<IActionResult> UpdateStatsAbilities(UpdateCharacterDefinitionRequestModel<StatModel> request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateStats(UpdateCharacterDefinitionRequestModel<StatModel> request, CancellationToken cancellationToken)
         {
             try
             {
@@ -437,7 +636,7 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpPut("properties")]
-        public async Task<IActionResult> UpdatePropertiesAbilities(UpdateCharacterDefinitionRequestModel<PropertyModel> request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateProperties(UpdateCharacterDefinitionRequestModel<PropertyModel> request, CancellationToken cancellationToken)
         {
             try
             {
@@ -457,6 +656,7 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("character/update-properties", ex));
             }
         }
+        [Authorize(Roles = "GAME MASTER")]
         [HttpPut("{id}/visibility/{visible}")]
         public async Task<IActionResult> ChangeVisibility(string id, bool visible, CancellationToken cancellationToken)
         {
@@ -464,11 +664,6 @@ namespace DnD.Api.Controllers
             {
                 var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
                 if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/change-visibility", "character not found"));
-                if (!User.IsInRole("GAME MASTER"))
-                {
-                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/change-visibility", "You do not have permission for this action"));
-                }
                 await _characterRepository.ChangeVisibilityAsync(id, visible, cancellationToken);
                 return Ok();
             }

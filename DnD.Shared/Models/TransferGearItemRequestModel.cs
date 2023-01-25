@@ -7,6 +7,7 @@ namespace DnD.Shared.Models
     public class TransferGearItemRequestModel
     {
         public string CharacterId { get; set; }
-        public List<GearModel> Gear { get; set; }
+        public string GearId { get; set; }
+        public double Quantity { get; set; }
     }
 }

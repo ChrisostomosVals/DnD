@@ -43,7 +43,7 @@ namespace DnD.Api.Controllers
             {
                 var responseRepo = await _worldObjectRepository.GetByIdAsync(id, cancellationToken);
                 if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object/get-one", "object not found"));
-                var response = _mapper.Map<Shared.Models.WorldObjectModel>(responseRepo);
+                var response = _mapper.Map<WorldObjectModel>(responseRepo);
                 return Ok(response);
             }
             catch (Exception ex)

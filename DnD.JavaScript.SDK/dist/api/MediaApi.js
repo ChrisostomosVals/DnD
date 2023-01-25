@@ -18,14 +18,14 @@ const ErrorResponseModel_1 = __importDefault(require("../models/ErrorResponseMod
 const constants_1 = require("../utils/constants");
 const httpService_1 = __importDefault(require("../utils/httpService"));
 class MediaApi {
-    static UploadAsync(token, url, type, name, files) {
+    static UploadAsync(token, url, request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const uri = `${url}/${constants_1.mediaEndpoint}/upload`;
                 const formData = new FormData();
-                formData.append("type", type);
-                formData.append("name", name);
-                for (const file of files) {
+                formData.append("type", request.type);
+                formData.append("name", request.name);
+                for (const file of request.files) {
                     formData.append('file', file, file.name);
                 }
                 const response = yield fetch(uri, {

@@ -1,9 +1,4 @@
-export default interface UpdateCharacterArsenalRequestModel {
-    id: number;
-    gearId: number;
-    type: string;
-    range: string;
-    attackBonus: number;
-    damage: string;
-    critical: string;
+import ArsenalModel from "./ArsenalModel";
+export default interface UpdateCharacterArsenalModelRequestModel extends ArsenalModel {
+    id: string;
 }

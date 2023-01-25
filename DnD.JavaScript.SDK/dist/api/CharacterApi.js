@@ -73,6 +73,230 @@ class CharacterApi {
             }
         });
     }
+    static GetGearAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/gear`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetGearAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetGearItemAsync(token, url, id, gearId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/gear/${gearId}`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetGearItemAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetArsenalAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/arsenal`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetArsenalAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetPropertiesAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/properties`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetPropertiesAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetSkillsAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/skills`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetSkillsAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetFeatsAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/feats`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetFeatsAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetSpecialAbilitiesAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/specialAbilities`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetSpecialAbilitiesAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetStatsAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/stats`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetStatsAsync().Exception", error));
+                ;
+            }
+        });
+    }
     static CreateAsync(token, url, request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -125,6 +349,342 @@ class CharacterApi {
             }
             catch (error) {
                 return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdateAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UpdateGearAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/gear`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdateGearAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static AddMoneyAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/gear/money/add`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.AddMoneyAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static RemoveMoneyAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/gear/money/remove`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.RemoveMoneyAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static TransferGearAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/gear/transfer`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.TransferGearAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static EquipItemAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/arsenal/add`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.EquipItemAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UnEquipItemAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/arsenal/remove`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UnEquipItemAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UpdateSkillsAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/skills`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdateSkillsAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UpdateFeatsAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/feats`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdateFeatsAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UpdateSpecialAbilitiesAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/specialAbilities`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdateSpecialAbilitiesAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UpdateStatsAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/stats`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdateStatsAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static UpdatePropertiesAsync(token, url, request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/stats`;
+                const response = yield httpService_1.default.putAsync(token, uri, request);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.UpdatePropertiesAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static ChangeVisibilityAsync(token, url, id, visible) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/visibility/${visible}`;
+                const response = yield httpService_1.default.putAsync(token, uri, null);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.ChangeVisibilityAsync().Exception", error));
                 ;
             }
         });

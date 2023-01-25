@@ -12,7 +12,7 @@ namespace DnD.Shared.Models
         [JsonPropertyName("quantity")]
         public double Quantity { get; set; }
         [JsonPropertyName("weight")]
-        public string Weight { get; set; }
+        public string? Weight { get; set; }
         [JsonPropertyName("id")]
         public string? Id { get; set; }
     }

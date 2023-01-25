@@ -1,4 +1,4 @@
 export default interface UserRoleModel {
-    id: number;
+    id: string;
     role: string;
 }

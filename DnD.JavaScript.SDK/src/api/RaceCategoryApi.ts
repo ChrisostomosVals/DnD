@@ -33,7 +33,7 @@ export default class RaceCategoryApi{
             return new ApiResponseModel<RaceCategoryModel[]>(null, ErrorResponseModel.NewError("RaceCategoryApi.GetAsync().Exception", error));;
         }
     }
-    public static async GetByIdAsync(token:string, url: string, id: number) : Promise<ApiResponseModel<RaceCategoryModel>> {
+    public static async GetByIdAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<RaceCategoryModel>> {
         try {
             const uri = `${url}/${raceCategoryEndpoint}/${id}`;
             const response = await HttpClient.getAsync(token, uri)

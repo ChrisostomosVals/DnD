@@ -1,7 +1,5 @@
 export default interface TransferGearItemRequestModel {
-    id: number;
     characterId: string;
-    name: string;
+    gearId: string;
     quantity: number;
-    weight: number;
 }

@@ -130,7 +130,7 @@ export default class LocationApi {
             return new ApiResponseModel<void>(null, ErrorResponseModel.NewError("LocationApi.UpdateAsync().Exception", error));;
         }
     }
-    public static async DeleteAsync(token: string, url: string, id: number): Promise<ApiResponseModel<void>> {
+    public static async DeleteAsync(token: string, url: string, id: string): Promise<ApiResponseModel<void>> {
         try {
             const uri = `${url}/${locationEndpoint}/${id}/delete`;
             const response = await HttpClient.deleteAsync(token, uri)

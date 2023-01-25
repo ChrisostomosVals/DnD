@@ -98,6 +98,7 @@ namespace DnD.Api.Controllers
             }
         }
         [HttpPost]
+        [Authorize(Roles = "GAME MASTER")]
         public async Task<IActionResult> Insert(InsertUserRequestModel request, CancellationToken cancellationToken)
         {
             try

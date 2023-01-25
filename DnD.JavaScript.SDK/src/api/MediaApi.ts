@@ -1,17 +1,18 @@
 import ApiResponseModel from "../models/ApiResponseModel";
 import ErrorResponseModel from "../models/ErrorResponseModel";
+import UploadMediaRequestModel from "../models/UploadMediaRequestModel";
 import { mediaEndpoint } from "../utils/constants";
 import HttpClient from "../utils/httpService";
 
 
 export class MediaApi {
-    public static async UploadAsync(token: string, url: string, type: string, name: string, files: File[]): Promise<ApiResponseModel<string>> {
+    public static async UploadAsync(token: string, url: string, request: UploadMediaRequestModel): Promise<ApiResponseModel<string>> {
         try {
             const uri = `${url}/${mediaEndpoint}/upload`
             const formData = new FormData();
-            formData.append("type", type)
-            formData.append("name", name)
-            for (const file of files) {
+            formData.append("type", request.type)
+            formData.append("name", request.name)
+            for (const file of request.files) {
                 formData.append('file', file, file.name)
             }
 

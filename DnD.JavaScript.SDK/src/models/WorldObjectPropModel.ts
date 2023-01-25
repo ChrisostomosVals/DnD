@@ -1,6 +1,4 @@
 export default interface WorldObjectPropModel {
-    id: number;
-    worldObjectId: number;
-    property: string;
+    name: string;
     value: string;
 }
