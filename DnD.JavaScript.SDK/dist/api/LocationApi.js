@@ -101,11 +101,11 @@ class LocationApi {
                 const uri = `${url}/${constants_1.locationEndpoint}`;
                 const response = yield httpService_1.default.postAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -129,11 +129,11 @@ class LocationApi {
                 const uri = `${url}/${constants_1.locationEndpoint}`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -157,11 +157,11 @@ class LocationApi {
                 const uri = `${url}/${constants_1.locationEndpoint}/${id}/delete`;
                 const response = yield httpService_1.default.deleteAsync(token, uri);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();

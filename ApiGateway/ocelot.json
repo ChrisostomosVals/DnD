@@ -7,35 +7,35 @@
       "UpstreamPathTemplate": "/gateway/api/{any}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "DownstreamPathTemplate": "/api/{any}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7270
+          "Port": 5270
         }
       ]
     },
-    {
-      "UpstreamPathTemplate": "/gateway/{any}/{id}",
-      "UpstreamHttpMethod": [ "Get", "Delete" ],
-      "DownstreamPathTemplate": "/api/{any}/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7270
-        }
-      ]
-    },
+    //{
+    //  "UpstreamPathTemplate": "/gateway/{any}/{id}",
+    //  "UpstreamHttpMethod": [ "Get", "Delete" ],
+    //  "DownstreamPathTemplate": "/api/{any}/{id}",
+    //  "DownstreamScheme": "https",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "localhost",
+    //      "Port": 5270
+    //    }
+    //  ]
+    //},
     {
       "UpstreamPathTemplate": "/gateway/connect",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamPathTemplate": "/connect/token",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 6000
+          "Port": 5000
         }
       ]
     }

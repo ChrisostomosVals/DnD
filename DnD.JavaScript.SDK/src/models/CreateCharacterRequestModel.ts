@@ -9,12 +9,5 @@ export default interface CreateCharacterRequestModel {
     type: string;
     classId: string;
     raceId: string;
-    arsenal: ArsenalModel[] | null;
-    gear: GearModel[] | null;
-    skills: SkillModel[] | null;
-    feats: string[] | null;
-    specialAbilities: string[] | null;
-    stats: StatModel[] | null;
-    properties: PropertyModel[] | null;
     visible: boolean;
 }

@@ -65,11 +65,11 @@ export default class WorldObjectApi{
             const uri = `${url}/${worldObjectEndpoint}`;
             const response = await HttpClient.postAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -89,11 +89,11 @@ export default class WorldObjectApi{
             const uri = `${url}/${worldObjectEndpoint}`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -113,11 +113,11 @@ export default class WorldObjectApi{
             const uri = `${url}/${worldObjectEndpoint}/${id}/delete`;
             const response = await HttpClient.deleteAsync(token, uri)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();

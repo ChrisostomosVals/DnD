@@ -33,7 +33,7 @@ export default class ClassApi{
             return new ApiResponseModel<ClassModel[]>(null, ErrorResponseModel.NewError("ClassApi.GetAsync().Exception", error));;
         }
     }
-    public static async GetByIdAsync(token:string, url: string, id: number) : Promise<ApiResponseModel<ClassModel>> {
+    public static async GetByIdAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<ClassModel>> {
         try {
             const uri = `${url}/${classEndpoint}/${id}`;
             const response = await HttpClient.getAsync(token, uri)
@@ -57,7 +57,7 @@ export default class ClassApi{
             return new ApiResponseModel<ClassModel>(null, ErrorResponseModel.NewError("ClassApi.GetByIdAsync().Exception", error));;
         }
     }
-    public static async GetByCategoryIdAsync(token:string, url: string, categoryId: number) : Promise<ApiResponseModel<ClassModel[]>> {
+    public static async GetByCategoryIdAsync(token:string, url: string, categoryId: string) : Promise<ApiResponseModel<ClassModel[]>> {
         try {
             const uri = `${url}/${classEndpoint}/${categoryId}/category`;
             const response = await HttpClient.getAsync(token, uri)

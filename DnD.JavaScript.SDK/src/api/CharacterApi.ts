@@ -262,11 +262,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}`;
             const response = await HttpClient.postAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -286,11 +286,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -310,11 +310,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/gear`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -334,11 +334,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/gear/money/add`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -358,11 +358,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/gear/money/remove`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -382,11 +382,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/gear/transfer`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -406,11 +406,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/arsenal/add`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -430,11 +430,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/arsenal/remove`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -454,11 +454,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/skills`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -478,11 +478,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/feats`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -502,11 +502,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/specialAbilities`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -526,11 +526,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/stats`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -550,11 +550,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/stats`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -574,11 +574,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/${id}/visibility/${visible}`;
             const response = await HttpClient.putAsync(token, uri, null)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();
@@ -598,11 +598,11 @@ export default class CharacterApi{
             const uri = `${url}/${characterEndpoint}/${id}/delete`;
             const response = await HttpClient.deleteAsync(token, uri)
             if(response.ok){
-                const data = await response.json();
+                const data = response.statusText;
                 if(data === null){
-                    return new ApiResponseModel<void>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<void>(data, null);
+                return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
                 const errorMsg = await response.json();

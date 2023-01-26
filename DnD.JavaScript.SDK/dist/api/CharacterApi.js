@@ -303,11 +303,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}`;
                 const response = yield httpService_1.default.postAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -331,11 +331,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -359,11 +359,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/gear`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -387,11 +387,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/gear/money/add`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -415,11 +415,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/gear/money/remove`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -443,11 +443,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/gear/transfer`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -471,11 +471,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/arsenal/add`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -499,11 +499,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/arsenal/remove`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -527,11 +527,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/skills`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -555,11 +555,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/feats`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -583,11 +583,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/specialAbilities`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -611,11 +611,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/stats`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -639,11 +639,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/stats`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -667,11 +667,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/${id}/visibility/${visible}`;
                 const response = yield httpService_1.default.putAsync(token, uri, null);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
@@ -695,11 +695,11 @@ class CharacterApi {
                 const uri = `${url}/${constants_1.characterEndpoint}/${id}/delete`;
                 const response = yield httpService_1.default.deleteAsync(token, uri);
                 if (response.ok) {
-                    const data = yield response.json();
+                    const data = response.statusText;
                     if (data === null) {
-                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    return new ApiResponseModel_1.default(data, null);
+                    return new ApiResponseModel_1.default(null, null);
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();

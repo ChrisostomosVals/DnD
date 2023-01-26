@@ -13,6 +13,7 @@ using System.Reflection;
 using DnD.Data.Models;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Configuration;
 
 namespace DnD.Api.Controllers
 {
@@ -25,13 +26,15 @@ namespace DnD.Api.Controllers
         private readonly UserRepository _userRepository;
         private readonly ILogger<CharacterController> _logger;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public CharacterController(ILogger<CharacterController> logger, CharacterRepository characterRepository, IMapper mapper, UserRepository userRepository)
+        public CharacterController(ILogger<CharacterController> logger, CharacterRepository characterRepository, IMapper mapper, UserRepository userRepository, IConfiguration configuration)
         {
             _logger = logger;
             _characterRepository = characterRepository;
             _mapper = mapper;
             _userRepository = userRepository;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -258,21 +261,24 @@ namespace DnD.Api.Controllers
         {
             try
             {
-                if(request.Gear is not null)
-                    foreach (var item in request.Gear) item.Id = Guid.NewGuid().ToString();
+                List<StatModel> stats = request.Type switch
+                {
+                    "HERO" => _configuration.GetSection("Hero").GetSection("Stats").Get<List<StatModel>>(),
+                    _ => _configuration.GetSection("Character").GetSection("Stats").Get<List<StatModel>>()
+                };
                 var newCharacter = new CharacterModel
                 {
                     Name = request.Name,
                     ClassId = request.ClassId,
                     Type = request.Type,
                     RaceId = request.RaceId,
-                    Gear = request.Gear is null ? new List<GearModel>() : request.Gear,
-                    Skills = request.Skills is null ? new List<SkillModel>() : request.Skills,
-                    Arsenal = request.Arsenal is null ? new List<ArsenalModel>() : request.Arsenal,
-                    Feats = request.Feats is null ? new List<string>() : request.Feats,
-                    SpecialAbilities = request.SpecialAbilities is null ? new List<string>() : request.SpecialAbilities,
-                    Stats = request.Stats is null ? new List<StatModel>() : request.Stats,
-                    Properties = request.Properties is null ? new List<PropertyModel>() : request.Properties,
+                    Gear = new List<GearModel>(),
+                    Skills = _configuration.GetSection("Skills").Get<List<SkillModel>>(),
+                    Arsenal = new List<ArsenalModel>(),
+                    Feats = new List<string>(),
+                    SpecialAbilities = new List<string>(),
+                    Stats = stats,
+                    Properties = new List<PropertyModel>(),
                     Visible = request.Visible,
                 };
                
@@ -330,10 +336,14 @@ namespace DnD.Api.Controllers
                 {
                     foreach (var item in request.UpdateDefinition)
                     {
-                        var findItem = findCharacter.Gear.FirstOrDefault(g => g.Name == item.Name);
-                        if (findItem is not null)
+                        var findItem = findCharacter.Gear.FirstOrDefault(g => g.Name == item.Name || g.Id == item.Id);
+                        if (findItem is null)
+                        { 
+                            item.Id ??= Guid.NewGuid().ToString();
+                        }
+                        else
                         {
-                            item.Quantity += findItem.Quantity;
+                            item.Id = findItem.Id;
                         }
                     }
                 }
@@ -525,25 +535,23 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("character/add-arsenal", ex));
             }
         }
-        [HttpPut("arsenal/remove")]
-        public async Task<IActionResult> UnEquipItem(UpdateCharacterArsenalRequestModel request, CancellationToken cancellationToken)
+        [HttpPut("{id}/arsenal/remove/{gearId}")]
+        public async Task<IActionResult> UnEquipItem(string id, string gearId, CancellationToken cancellationToken)
         {
             try
             {
-                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
                 if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "character not found"));
-                var findGear = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
-                if (findGear is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "gear item not found"));
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/add-arsenal", "You do not have permission for this action"));
+                    if (id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/add-arsenal", "You do not have permission for this action"));
                 }
                 if (findCharacter.Arsenal.IsNullOrEmpty()) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "inventory is empty"));
-                var findArsenal = findCharacter.Arsenal!.FirstOrDefault(a => a.GearId == request.GearId);
+                var findArsenal = findCharacter.Arsenal!.FirstOrDefault(a => a.GearId == gearId);
                 if (findArsenal is null) return NotFound(ErrorResponseModel.NewError("character/add-arsenal", "item does not exist in inventory"));
                 findCharacter.Arsenal!.Remove(findArsenal);
-                await _characterRepository.UpdateArsenalAsync(request.Id, findCharacter.Arsenal, cancellationToken);
+                await _characterRepository.UpdateArsenalAsync(id, findCharacter.Arsenal, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
