@@ -131,6 +131,28 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("character/get-one", ex));
             }
         }
+        [HttpGet("{id}/money")]
+        public async Task<IActionResult> GetMoney(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/get-money", "character not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/get-money", "You do not have permission for this action"));
+                }
+                var money = await _characterRepository.GetMoneyAsync(findCharacter.Id!, cancellationToken);
+                if (money is null) return NotFound(ErrorResponseModel.NewError("character/get-money", "moeny not found"));
+                var response = _mapper.Map<GearModel>(money);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/get-money", ex));
+            }
+        }
         [HttpGet("{id}/arsenal")]
         public async Task<IActionResult> GetArsenal(string id, CancellationToken cancellationToken)
         {
@@ -266,13 +288,23 @@ namespace DnD.Api.Controllers
                     "HERO" => _configuration.GetSection("Hero").GetSection("Stats").Get<List<StatModel>>(),
                     _ => _configuration.GetSection("Character").GetSection("Stats").Get<List<StatModel>>()
                 };
+                List<GearModel> gear = new List<GearModel>
+                {
+                    new GearModel
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = "Money",
+                        Quantity = 0,
+                        Weight = "-"
+                    }
+                };
                 var newCharacter = new CharacterModel
                 {
                     Name = request.Name,
                     ClassId = request.ClassId,
                     Type = request.Type,
                     RaceId = request.RaceId,
-                    Gear = new List<GearModel>(),
+                    Gear = request.Type == "HERO" ? gear : new List<GearModel>(),
                     Skills = _configuration.GetSection("Skills").Get<List<SkillModel>>(),
                     Arsenal = new List<ArsenalModel>(),
                     Feats = new List<string>(),

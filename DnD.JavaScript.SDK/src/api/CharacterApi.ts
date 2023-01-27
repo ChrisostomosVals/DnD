@@ -113,6 +113,30 @@ export default class CharacterApi{
             return new ApiResponseModel<GearModel>(null, ErrorResponseModel.NewError("CharacterApi.GetGearItemAsync().Exception", error));;
         }
     }
+    public static async GetMoneyAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<GearModel>> {
+        try {
+            const uri = `${url}/${characterEndpoint}/${id}/money`;
+            const response = await HttpClient.getAsync(token, uri)
+            if(response.ok){
+                const data = await response.json();
+                if(data === null){
+                    return new ApiResponseModel<GearModel>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                }
+                return new ApiResponseModel<GearModel>(data, null);
+            }
+            else if(response.status == 400 || response.status == 404){
+                const errorMsg = await response.json();
+                const error = response.statusText;
+                return new ApiResponseModel<GearModel>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+            }
+            else if (response.status == 401){
+                const error = response.statusText;
+                return new ApiResponseModel<GearModel>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
+            }
+        } catch (error) {
+            return new ApiResponseModel<GearModel>(null, ErrorResponseModel.NewError("CharacterApi.GetMoneyAsync().Exception", error));;
+        }
+    }
     public static async GetArsenalAsync(token:string, url: string, id: string) : Promise<ApiResponseModel<ArsenalModel[]>> {
         try {
             const uri = `${url}/${characterEndpoint}/${id}/arsenal`;

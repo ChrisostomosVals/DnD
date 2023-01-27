@@ -16,6 +16,7 @@ export default class CharacterApi {
     static GetByIdAsync(token: string, url: string, id: string): Promise<ApiResponseModel<CharacterModel>>;
     static GetGearAsync(token: string, url: string, id: string): Promise<ApiResponseModel<GearModel[]>>;
     static GetGearItemAsync(token: string, url: string, id: string, gearId: string): Promise<ApiResponseModel<GearModel>>;
+    static GetMoneyAsync(token: string, url: string, id: string): Promise<ApiResponseModel<GearModel>>;
     static GetArsenalAsync(token: string, url: string, id: string): Promise<ApiResponseModel<ArsenalModel[]>>;
     static GetPropertiesAsync(token: string, url: string, id: string): Promise<ApiResponseModel<PropertyModel[]>>;
     static GetSkillsAsync(token: string, url: string, id: string): Promise<ApiResponseModel<SkillModel[]>>;

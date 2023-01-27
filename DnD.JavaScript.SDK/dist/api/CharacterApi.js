@@ -129,6 +129,34 @@ class CharacterApi {
             }
         });
     }
+    static GetMoneyAsync(token, url, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.characterEndpoint}/${id}/money`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
+                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("CharacterApi.GetMoneyAsync().Exception", error));
+                ;
+            }
+        });
+    }
     static GetArsenalAsync(token, url, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

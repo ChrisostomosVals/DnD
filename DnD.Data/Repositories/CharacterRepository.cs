@@ -70,6 +70,14 @@ namespace DnD.Data.Repositories
             var character = await cursor.FirstOrDefaultAsync(cancellationToken);
             return character.Gear.FirstOrDefault(g => g.Id == gearId);
         }
+        public async Task<GearBson> GetMoneyAsync(string id, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<CharacterBson>("characters");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
+            var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
+            var character = await cursor.FirstOrDefaultAsync(cancellationToken);
+            return character.Gear.FirstOrDefault(g => g.Name == "Money");
+        }
         public async Task<IEnumerable<GearBson>?> GetGearAsync(string id, CancellationToken cancellationToken = default)
         {
             var characters = _connection.Database.GetCollection<CharacterBson>("characters");
