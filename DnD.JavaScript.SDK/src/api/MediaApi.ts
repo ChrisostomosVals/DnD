@@ -4,16 +4,15 @@ import UploadMediaRequestModel from "../models/UploadMediaRequestModel";
 import { mediaEndpoint } from "../utils/constants";
 import HttpClient from "../utils/httpService";
 
-
 export class MediaApi {
-    public static async UploadAsync(token: string, url: string, request: UploadMediaRequestModel): Promise<ApiResponseModel<string>> {
+    public static async UploadAsync(token: string, url: string, request: UploadMediaRequestModel): Promise<ApiResponseModel<string[]>> {
         try {
             const uri = `${url}/${mediaEndpoint}/upload`
             const formData = new FormData();
             formData.append("type", request.type)
             formData.append("name", request.name)
             for (const file of request.files) {
-                formData.append('file', file, file.name)
+                formData.append('Files', file);
             }
 
             const response = await fetch(uri, {
@@ -26,17 +25,17 @@ export class MediaApi {
             if (response.ok) {
                 const data = await response.json();
                 if (data === null) {
-                    return new ApiResponseModel<string>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<string[]>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<string>(data, null);
+                return new ApiResponseModel<string[]>(data, null);
             }
             else if (response.status == 400 || response.status == 404) {
                 const errorMsg = await response.json();
                 const error = response.statusText;
-                return new ApiResponseModel<string>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                return new ApiResponseModel<string[]>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
             }
         } catch (error) {
-            return new ApiResponseModel<string>(null, ErrorResponseModel.NewError("MediaApi.UploadAsync().Exception", error));;
+            return new ApiResponseModel<string[]>(null, ErrorResponseModel.NewError("MediaApi.UploadAsync().Exception", error));;
         }
     }
     public static async DownloadAsync(token: string, url: string, path: string): Promise<ApiResponseModel<any>> {
@@ -64,29 +63,29 @@ export class MediaApi {
             return new ApiResponseModel<any>(null, ErrorResponseModel.NewError("MediaApi.DownloadAsync().Exception", error));;
         }
     }
-    public static async DeleteAsync(token: string, url: string, path: string): Promise<ApiResponseModel<string>> {
+    public static async DeleteAsync(token: string, url: string, path: string): Promise<ApiResponseModel<any>> {
         try {
             const uri = `${url}/${mediaEndpoint}/${path}/delete`;
             const response = await HttpClient.deleteAsync(token, uri)
             if (response.ok) {
                 const data = await response.json();
                 if (data === null) {
-                    return new ApiResponseModel<string>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new ApiResponseModel<any>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<string>(data, null);
+                return new ApiResponseModel<any>(data, null);
             }
             else if (response.status == 400 || response.status == 404) {
                 const errorMsg = await response.json();
                 const error = response.statusText;
-                return new ApiResponseModel<string>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
             }
             else if (response.status == 401) {
                 const error = response.statusText;
-                return new ApiResponseModel<string>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
+                return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
             }
 
         } catch (error) {
-            return new ApiResponseModel<string>(null, ErrorResponseModel.NewError("MediaApi.DeleteAsync().Exception", error));;
+            return new ApiResponseModel<any>(null, ErrorResponseModel.NewError("MediaApi.DeleteAsync().Exception", error));;
         }
     }
 }

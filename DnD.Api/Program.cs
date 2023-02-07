@@ -18,6 +18,7 @@ var connection = new MongoDbConnection(builder.Configuration.GetConnectionString
 connection.UseDatabase(builder.Configuration.GetValue<string>("Database"));
 builder.Services.AddSingleton<IMongoDbConnection>(connection);
 builder.Services.AddTransient<CharacterRepository>();
+builder.Services.AddTransient<ChapterRepository>();
 builder.Services.AddTransient<ClassCategoryRepository>();
 builder.Services.AddTransient<ClassRepository>();
 builder.Services.AddTransient<WorldObjectRepository>();

@@ -72,7 +72,7 @@ namespace DnD.Api.Controllers
             {
                 if (!System.IO.File.Exists(path)) return NotFound(ErrorResponseModel.NewError("media/download", "media not found"));
                 System.IO.File.Delete(path);
-                return Ok(path);
+                return Ok(new { path });
             }
             catch (Exception ex)
             {

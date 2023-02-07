@@ -1,5 +1,4 @@
 ﻿using DataAdapter.NoSql;
-using DataAdapter.Sql;
 using DnD.Data.Internal;
 using DnD.Data.Models;
 using MongoDB.Driver;

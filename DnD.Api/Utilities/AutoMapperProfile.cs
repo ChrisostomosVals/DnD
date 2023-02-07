@@ -10,6 +10,7 @@ namespace DnD.Api.Utilities
         {
             CreateMap<ClassBson, ClassModel>().ReverseMap();
             CreateMap<ClassCategoryBson, ClassCategoryModel>().ReverseMap();
+            CreateMap<ChapterBson, ChapterModel>().ReverseMap();
             CreateMap<CharacterBson, CharacterModel>().ReverseMap();
             CreateMap<SkillBson, SkillModel>().ReverseMap();
             CreateMap<StatBson, StatModel>().ReverseMap();

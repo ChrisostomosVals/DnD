@@ -1,6 +1,7 @@
 export declare const characterEndpoint = "api/Character";
 export declare const classCategoryEndpoint = "api/ClassCategory";
 export declare const classEndpoint = "api/Class";
+export declare const chapterEndpoint = "api/Chapter";
 export declare const locationEndpoint = "api/Location";
 export declare const mediaEndpoint = "api/Media";
 export declare const raceCategoryEndpoint = "api/RaceCategory";

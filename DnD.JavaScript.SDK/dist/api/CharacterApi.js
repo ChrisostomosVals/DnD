@@ -664,7 +664,7 @@ class CharacterApi {
     static UpdatePropertiesAsync(token, url, request) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uri = `${url}/${constants_1.characterEndpoint}/stats`;
+                const uri = `${url}/${constants_1.characterEndpoint}/properties`;
                 const response = yield httpService_1.default.putAsync(token, uri, request);
                 if (response.ok) {
                     const data = response.statusText;

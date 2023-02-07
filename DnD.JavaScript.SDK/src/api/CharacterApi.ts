@@ -571,7 +571,7 @@ export default class CharacterApi{
     }
     public static async UpdatePropertiesAsync(token:string, url: string, request: UpdateCharacterDefinitionRequestModel<PropertyModel>) : Promise<ApiResponseModel<void>> {
         try {
-            const uri = `${url}/${characterEndpoint}/stats`;
+            const uri = `${url}/${characterEndpoint}/properties`;
             const response = await HttpClient.putAsync(token, uri, request)
             if(response.ok){
                 const data = response.statusText;

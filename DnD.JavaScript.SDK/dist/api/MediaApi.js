@@ -26,7 +26,7 @@ class MediaApi {
                 formData.append("type", request.type);
                 formData.append("name", request.name);
                 for (const file of request.files) {
-                    formData.append('file', file, file.name);
+                    formData.append('Files', file);
                 }
                 const response = yield fetch(uri, {
                     method: "POST",

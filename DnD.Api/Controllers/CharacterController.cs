@@ -75,7 +75,7 @@ namespace DnD.Api.Controllers
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
                     if (user.CharacterId != id && response.Stats is not null)
                     {
-                        foreach (var item in response.Stats)
+                        foreach (var item in response.Stats.ToList())
                         {
                             if (!item.Shown) response.Stats.Remove(item);
                         }
@@ -533,7 +533,7 @@ namespace DnD.Api.Controllers
                 if (!findCharacter.Arsenal.IsNullOrEmpty())
                 {
                     var checkExistingArsenal = findCharacter.Arsenal!.Where(a => a.GearId == request.GearId);
-                    if (checkExistingArsenal.Count() >= findGear.Quantity) return BadRequest(ErrorResponseModel.NewError("character/add-arsenal", "items are already equipped"));
+                    if (checkExistingArsenal.Count() >= findGear.Quantity) return BadRequest(ErrorResponseModel.NewError("character/add-arsenal", "item is already equipped"));
                     findCharacter.Arsenal!.Add(new ArsenalBson
                     {
                         GearId = request.GearId,

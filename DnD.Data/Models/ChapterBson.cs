@@ -14,5 +14,7 @@ namespace DnD.Data.Models
         public string Name { get; set; }
         [BsonElement("story")]
         public string Story { get; set; }
+        [BsonElement("date")]
+        public DateTime Date { get; set; }
     }
 }
