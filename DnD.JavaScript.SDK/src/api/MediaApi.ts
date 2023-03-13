@@ -30,9 +30,8 @@ export class MediaApi {
                 return new ApiResponseModel<string[]>(data, null);
             }
             else if (response.status == 400 || response.status == 404) {
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<string[]>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<string[]>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
         } catch (error) {
             return new ApiResponseModel<string[]>(null, ErrorResponseModel.NewError("MediaApi.UploadAsync().Exception", error));;
@@ -50,9 +49,8 @@ export class MediaApi {
                 return new ApiResponseModel<any>(data, null);
             }
             else if (response.status == 400 || response.status == 404) {
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401) {
                 const error = response.statusText;
@@ -75,9 +73,8 @@ export class MediaApi {
                 return new ApiResponseModel<any>(data, null);
             }
             else if (response.status == 400 || response.status == 404) {
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401) {
                 const error = response.statusText;

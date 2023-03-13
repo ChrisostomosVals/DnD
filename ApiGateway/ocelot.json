@@ -15,22 +15,22 @@
         }
       ]
     },
-    //{
-    //  "UpstreamPathTemplate": "/gateway/{any}/{id}",
-    //  "UpstreamHttpMethod": [ "Get", "Delete" ],
-    //  "DownstreamPathTemplate": "/api/{any}/{id}",
-    //  "DownstreamScheme": "https",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "localhost",
-    //      "Port": 5270
-    //    }
-    //  ]
-    //},
     {
-      "UpstreamPathTemplate": "/gateway/connect",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/connect/token",
+      "UpstreamPathTemplate": "/gateway/map/{any}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/data/renia-map/{any}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8080
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/connect/{any}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamPathTemplate": "/connect/{any}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

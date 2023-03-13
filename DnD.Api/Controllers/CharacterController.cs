@@ -279,15 +279,23 @@ namespace DnD.Api.Controllers
         }
         [HttpPost]
         [Authorize(Roles = ("GAME MASTER"))]
-        public async Task<IActionResult> Create(CreateCharacterRequestModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromServices] RaceRepository _raceRepository, CreateCharacterRequestModel request, CancellationToken cancellationToken)
         {
             try
             {
+                var race = await _raceRepository.GetByIdAsync(request.RaceId, cancellationToken);
+                if(race is null) return NotFound(ErrorResponseModel.NewError("character/create", "race not found"));
                 List<StatModel> stats = request.Type switch
                 {
                     "HERO" => _configuration.GetSection("Hero").GetSection("Stats").Get<List<StatModel>>(),
                     _ => _configuration.GetSection("Character").GetSection("Stats").Get<List<StatModel>>()
                 };
+                stats.Add(new StatModel
+                {
+                    Name = "Size",
+                    Value = race.Size,
+                    Shown = request.Type == "Hero"
+                });
                 List<GearModel> gear = new List<GearModel>
                 {
                     new GearModel

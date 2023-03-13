@@ -13,5 +13,7 @@ namespace DnD.Shared.Models
         public string Name { get; set; }
         [JsonPropertyName("categoryId")]
         public string CategoryId { get; set; }
+        [JsonPropertyName("size")]
+        public string Size { get; set; }
     }
 }

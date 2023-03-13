@@ -14,5 +14,7 @@ namespace DnD.Data.Models
         public string CategoryId { get; set; }
         [BsonElement("name")]
         public string Name { get; set; }
+        [BsonElement("size")]
+        public string Size { get; set; }
     }
 }

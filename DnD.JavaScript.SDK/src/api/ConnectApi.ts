@@ -5,6 +5,7 @@
 import ApiResponseModel from "../models/ApiResponseModel";
 import ErrorResponseModel from "../models/ErrorResponseModel";
 import TokenModel from "../models/TokenModel";
+import HttpClient from "../utils/httpService";
 
 
 export default class ConnectApi{
@@ -24,7 +25,7 @@ export default class ConnectApi{
                 formBody.push(encodedKey + "=" + encodedValue);
               }
               let stringFormBody= formBody.join("&");
-              const response = await fetch(`${url}/connect`, {
+              const response = await fetch(`${url}/connect/token`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
@@ -47,5 +48,27 @@ export default class ConnectApi{
             return new ApiResponseModel<TokenModel>(null, ErrorResponseModel.NewError("ConnectApi.LoginAsync().Exception", error));;
         }
     }
-    
+    public static async UserInfo(token: string, url: string): Promise<ApiResponseModel<any>>{
+      try {
+        const uri = `${url}/connect/userinfo`;
+        const response = await HttpClient.getAsync(token, uri)
+        if (response.ok) {
+            const data = await response.json();
+            if (data === null) {
+                return new ApiResponseModel<any>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+            }
+            return new ApiResponseModel<any>(data, null);
+        }
+        else if (response.status == 400 || response.status == 404) {
+            const error = response.statusText;
+            return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, error));
+        }
+        else if (response.status == 401) {
+            const error = response.statusText;
+            return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
+        }
+      } catch (error) {
+          return new ApiResponseModel<any>(null, ErrorResponseModel.NewError("ConnectApi.UserInfo().Exception", error));;
+      }
+    }
 }

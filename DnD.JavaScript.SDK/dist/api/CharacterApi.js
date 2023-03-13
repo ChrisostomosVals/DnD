@@ -507,8 +507,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -535,8 +534,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -563,8 +561,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -591,8 +588,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -619,8 +615,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -647,8 +642,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -675,8 +669,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -703,8 +696,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;
@@ -731,8 +723,7 @@ class CharacterApi {
                 }
                 else if (response.status == 400 || response.status == 404) {
                     const errorMsg = yield response.json();
-                    const error = response.statusText;
-                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, errorMsg));
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
                 }
                 else if (response.status == 401) {
                     const error = response.statusText;

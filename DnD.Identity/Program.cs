@@ -2,6 +2,7 @@ using DataAdapter.NoSql;
 using DnD.Data.Repositories;
 using DnD.Identity.Stores;
 using IdentityServer4.Stores;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddIdentityServer()
                 .AddProfileService<ProfileService>()
                 .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
                 .AddResourceStore<ResourceStore>();
-
+IdentityModelEventSource.ShowPII = true;
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

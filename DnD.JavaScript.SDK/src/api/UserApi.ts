@@ -24,9 +24,8 @@ export default class UserApi{
                 return new ApiResponseModel<UserModel[]>(data, null);
             }
             else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<UserModel[]>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<UserModel[]>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401){
                 const error = response.statusText;
@@ -48,9 +47,8 @@ export default class UserApi{
                 return new ApiResponseModel<UserModel>(data, null);
             }
             else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401){
                 const error = response.statusText;
@@ -72,9 +70,8 @@ export default class UserApi{
                 return new ApiResponseModel<UserModel>(data, null);
             }
             else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<UserModel>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401){
                 const error = response.statusText;
@@ -96,9 +93,8 @@ export default class UserApi{
                 return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401){
                 const error = response.statusText;
@@ -120,9 +116,8 @@ export default class UserApi{
                 return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401){
                 const error = response.statusText;
@@ -144,9 +139,8 @@ export default class UserApi{
                 return new ApiResponseModel<void>(null, null);
             }
             else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+                const errorMsg: ErrorResponseModel = await response.json();
+                return new ApiResponseModel<void>(null, ErrorResponseModel.NewErrorMsg(errorMsg.error, errorMsg.message));
             }
             else if (response.status == 401){
                 const error = response.statusText;
