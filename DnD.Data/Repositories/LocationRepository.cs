@@ -51,6 +51,7 @@ namespace DnD.Data.Repositories
                 .Set(c => c.Y, location.Y)
                 .Set(c => c.Date, location.Date)
                 .Set(c => c.Time, location.Time)
+                .Set(c => c.Year, location.Year)
                 .Set(c => c.Season, location.Season)
                 .Set(c => c.Events, location.Events);
             await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);

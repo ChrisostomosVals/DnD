@@ -17,46 +17,52 @@ const ErrorResponseModel_1 = __importDefault(require("../models/ErrorResponseMod
 const constants_1 = require("../utils/constants");
 const httpService_1 = __importDefault(require("../utils/httpService"));
 class LocationApi {
-    static GetAsync(token, url, latest) {
+    static GetAsync(token, url) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (latest) {
-                    const uri = `${url}/${constants_1.locationEndpoint}/?latest=true`;
-                    const response = yield httpService_1.default.getAsync(token, uri);
-                    if (response.ok) {
-                        const data = yield response.json();
-                        if (data === null) {
-                            return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
-                        }
-                        return new ApiResponseModel_1.default(data, null);
+                const uri = `${url}/${constants_1.locationEndpoint}`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    else if (response.status == 400 || response.status == 404) {
-                        const errorMsg = yield response.json();
-                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
-                    }
-                    else if (response.status == 401) {
-                        const error = response.statusText;
-                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
-                    }
+                    return new ApiResponseModel_1.default(data, null);
                 }
-                else {
-                    const uri = `${url}/${constants_1.locationEndpoint}`;
-                    const response = yield httpService_1.default.getAsync(token, uri);
-                    if (response.ok) {
-                        const data = yield response.json();
-                        if (data === null) {
-                            return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
-                        }
-                        return new ApiResponseModel_1.default(data, null);
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
+                }
+            }
+            catch (error) {
+                return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewError("LocationApi.GetAsync().Exception", error));
+                ;
+            }
+        });
+    }
+    static GetLatestAsync(token, url) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const uri = `${url}/${constants_1.locationEndpoint}/?latest=true`;
+                const response = yield httpService_1.default.getAsync(token, uri);
+                if (response.ok) {
+                    const data = yield response.json();
+                    if (data === null) {
+                        return new ApiResponseModel_1.default(data, ErrorResponseModel_1.default.NewErrorMsg("content-null", "The response body was empty"));
                     }
-                    else if (response.status == 400 || response.status == 404) {
-                        const errorMsg = yield response.json();
-                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
-                    }
-                    else if (response.status == 401) {
-                        const error = response.statusText;
-                        return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
-                    }
+                    return new ApiResponseModel_1.default(data, null);
+                }
+                else if (response.status == 400 || response.status == 404) {
+                    const errorMsg = yield response.json();
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(errorMsg.error, errorMsg.message));
+                }
+                else if (response.status == 401) {
+                    const error = response.statusText;
+                    return new ApiResponseModel_1.default(null, ErrorResponseModel_1.default.NewErrorMsg(error, "Unauthorized access"));
                 }
             }
             catch (error) {
