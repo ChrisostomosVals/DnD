@@ -10,6 +10,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 builder.Services.AddOcelot(builder.Configuration);
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(4001, configure => configure.UseHttps()); // to listen for incoming https connection on port 7001
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

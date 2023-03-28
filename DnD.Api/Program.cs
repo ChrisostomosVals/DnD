@@ -1,6 +1,7 @@
 using DataAdapter.NoSql;
 using DnD.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
@@ -73,11 +74,11 @@ builder.Services.AddSwaggerGen(options =>
     });
     
 });
-//builder.WebHost.ConfigureKestrel(options =>
-//{
-//    options.ListenAnyIP(5001); // to listen for incoming http connection on port 5001
-//    options.ListenAnyIP(7001, configure => configure.UseHttps()); // to listen for incoming https connection on port 7001
-//});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5270);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
