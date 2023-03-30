@@ -294,7 +294,7 @@ namespace DnD.Api.Controllers
                 {
                     Name = "Size",
                     Value = race.Size,
-                    Shown = request.Type == "Hero"
+                    Shown = request.Type == "HERO"
                 });
                 List<GearModel> gear = new List<GearModel>
                 {
