@@ -14,6 +14,9 @@ using DnD.Data.Models;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats;
 
 namespace DnD.Api.Controllers
 {
@@ -54,7 +57,13 @@ namespace DnD.Api.Controllers
                 if(!User.IsInRole("GAME MASTER"))
                 {
                     response = response.Where(r => r.Visible == true);
+                    foreach (var character in response.ToList())
+                    {
+                        if (character.Stats is null) continue;
+                        character.Stats = character.Stats.Where(stat => stat.Shown == true).ToList();
+                    }
                 }
+                response = response.OrderBy(character => character.Type != "HERO").ThenBy(character => character.Type);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -75,10 +84,7 @@ namespace DnD.Api.Controllers
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
                     if (user.CharacterId != id && response.Stats is not null)
                     {
-                        foreach (var item in response.Stats.ToList())
-                        {
-                            if (!item.Shown) response.Stats.Remove(item);
-                        }
+                        response.Stats = response.Stats.Where(stat => stat.Shown == true).ToList();
                     }
                 }
                 return Ok(response);
@@ -275,6 +281,78 @@ namespace DnD.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("character/get-stats", ex));
+            }
+        }
+        [HttpGet("{id}/images")]
+        public async Task<IActionResult> GetImages(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var responseRepo = await _characterRepository.GetByIdAsync(id, cancellationToken);
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("character/get-images", "character not found"));
+                var response = _mapper.Map<CharacterModel>(responseRepo);
+                ImagesUriModel responseImage = new ImagesUriModel
+                {
+                    Id = id,
+                    Images = new List<ImageInfoModel>()
+                };
+                response.Properties?.ForEach(prop =>
+                {
+                    if (prop.Type == "Image" || prop.Type == "Profile Image")
+                    {
+                        if (System.IO.File.Exists(prop.Value))
+                        {
+                            using (var image = Image.Load(prop.Value))
+                            {
+                                int width = image.Width;
+                                int height = image.Height;
+
+                                const int maxWidth = 800;
+                                if (width > maxWidth)
+                                {
+                                    image.Mutate(x => x.Resize(maxWidth, 0));
+                                    width = maxWidth;
+                                    height = (int)(image.Height * ((float)maxWidth / image.Width));
+                                }
+                                IImageFormat imageFormat;
+                                switch (Path.GetExtension(prop.Value).ToLower())
+                                {
+                                    case ".jpg":
+                                    case ".jpeg":
+                                    default:
+                                        imageFormat = JpegFormat.Instance;
+                                        break;
+                                    case ".png":
+                                        imageFormat = PngFormat.Instance;
+                                        break;
+                                }
+                                using (var memoryStream = new MemoryStream())
+                                {
+                                    image.Save(memoryStream, imageFormat);
+                                    byte[] imageBytes = memoryStream.ToArray();
+                                    string base64Image = Convert.ToBase64String(imageBytes);
+
+                                    string imageUrl = $"data:image/{imageFormat.DefaultMimeType.ToLower()};base64,{base64Image}";
+
+
+                                    ImageInfoModel imageInfo = new ImageInfoModel
+                                    {
+                                        Url = imageUrl,
+                                        Width = width,
+                                        Height = height
+                                    };
+
+                                    responseImage.Images.Add(imageInfo);
+                                }
+                            }
+                        }
+                    }
+                });
+                return Ok(responseImage);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("world-object/get-images", ex));
             }
         }
         [HttpPost]

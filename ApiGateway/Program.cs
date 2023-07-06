@@ -12,7 +12,7 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 builder.Services.AddOcelot(builder.Configuration);
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(4001, configure => configure.UseHttps()); // to listen for incoming https connection on port 7001
+    options.ListenAnyIP(4001);
 });
 var app = builder.Build();
 
@@ -21,7 +21,6 @@ if (app.Environment.IsDevelopment())
 {
 }
 
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

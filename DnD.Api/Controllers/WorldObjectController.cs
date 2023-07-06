@@ -5,6 +5,11 @@ using DnD.Data.Repositories;
 using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using System.IO;
 
 namespace DnD.Api.Controllers
 {
@@ -49,6 +54,78 @@ namespace DnD.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("world-object/get-one", ex));
+            }
+        }
+        [HttpGet("{id}/images")]
+        public async Task<IActionResult> GetImages(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var responseRepo = await _worldObjectRepository.GetByIdAsync(id, cancellationToken);
+                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("world-object/get-one", "object not found"));
+                var response = _mapper.Map<WorldObjectModel>(responseRepo);
+                ImagesUriModel responseImage = new ImagesUriModel
+                {
+                    Id = id,
+                    Images = new List<ImageInfoModel>()
+                };
+                response.Properties?.ForEach(prop =>
+                {
+                    if (prop.Name == "image")
+                    {
+                        if (System.IO.File.Exists(prop.Value))
+                        {
+                            using (var image = Image.Load(prop.Value))
+                            {
+                                int width = image.Width;
+                                int height = image.Height;
+
+                                const int maxWidth = 800;
+                                if (width > maxWidth)
+                                {
+                                    image.Mutate(x => x.Resize(maxWidth, 0));
+                                    width = maxWidth;
+                                    height = (int)(image.Height * ((float)maxWidth / image.Width));
+                                }
+                                IImageFormat imageFormat;
+                                switch (Path.GetExtension(prop.Value).ToLower())
+                                {
+                                    case ".jpg":
+                                    case ".jpeg":
+                                    default:
+                                        imageFormat = JpegFormat.Instance;
+                                        break;
+                                    case ".png":
+                                        imageFormat = PngFormat.Instance;
+                                        break;
+                                }
+                                using (var memoryStream = new MemoryStream())
+                                {
+                                    image.Save(memoryStream, imageFormat);
+                                    byte[] imageBytes = memoryStream.ToArray();
+                                    string base64Image = Convert.ToBase64String(imageBytes);
+
+                                    string imageUrl = $"data:image/{imageFormat.DefaultMimeType.ToLower()};base64,{base64Image}";
+
+
+                                    ImageInfoModel imageInfo = new ImageInfoModel
+                                    {
+                                        Url = imageUrl,
+                                        Width = width,
+                                        Height = height
+                                    };
+
+                                    responseImage.Images.Add(imageInfo);
+                                }
+                            }
+                        }
+                    }
+                });
+                return Ok(responseImage);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("world-object/get-images", ex));
             }
         }
 

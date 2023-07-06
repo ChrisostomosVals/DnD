@@ -5,6 +5,7 @@ using DnD.Data.Repositories;
 using DnD.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace DnD.Api.Controllers
 {
@@ -39,6 +40,19 @@ namespace DnD.Api.Controllers
                 {
                     var responseRepo = await _locationRepository.GetAsync(cancellationToken);
                     var response = _mapper.Map<IEnumerable<LocationModel>>(responseRepo);
+                    response = response.OrderByDescending(location => location.Year)
+                        .ThenByDescending(location => location.Date)
+                        .ThenByDescending(location =>
+                        {
+                            if (DateTime.TryParseExact(location.Time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime time))
+                            {
+                                return time;
+                            }
+                            else
+                            {
+                                return DateTime.MinValue;
+                            }
+                        });
                     return Ok(response);
                 }
             }

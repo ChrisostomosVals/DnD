@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using System.Net;
 using UploadStream;
 
 namespace DnD.Api.Controllers
@@ -79,5 +80,29 @@ namespace DnD.Api.Controllers
                 return BadRequest(ErrorResponseModel.NewError("media-delete", ex));
             }
         }
+        [HttpGet("image/{path}")]
+        public IActionResult GetImage(string path)
+        {
+            try
+            {
+                if (System.IO.File.Exists(path))
+                {
+                    byte[] imageBytes = System.IO.File.ReadAllBytes(path);
+
+                    string base64Image = Convert.ToBase64String(imageBytes);
+
+                    string imageUrl = $"data:image/jpeg;base64,{base64Image}";
+
+                    return Ok(new { url = imageUrl });
+                }
+
+                return NotFound(ErrorResponseModel.NewError("media-get-image", "image not found"));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("media-get-image", ex));
+            }
+        }
+
     }
 }

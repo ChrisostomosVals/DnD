@@ -50,7 +50,7 @@ namespace DnD.Data.Repositories
         public async Task<IEnumerable<CharacterBson>> GetHostileAsync(CancellationToken cancellationToken = default)
         {
             var characters = _connection.Database.GetCollection<CharacterBson>("characters");
-            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Type, "MONSTER");
+            var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Type, "HOSTILE");
             var cursor = await characters.FindAsync(filter, cancellationToken: cancellationToken);
             return await cursor.ToListAsync(cancellationToken);
         }
@@ -186,7 +186,7 @@ namespace DnD.Data.Repositories
             var characters = _connection.Database.GetCollection<CharacterBson>("characters");
             var filter = new FilterDefinitionBuilder<CharacterBson>().Eq(c => c.Id, id);
             var updateDefinition = new UpdateDefinitionBuilder<CharacterBson>()
-                .Set(c => c.Feats, specialAbilities);
+                .Set(c => c.SpecialAbilities, specialAbilities);
             await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
         }
         public async Task UpdateStatsAsync(string id, IList<StatBson> stats, CancellationToken cancellationToken = default)
