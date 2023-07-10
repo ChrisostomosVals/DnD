@@ -9,6 +9,8 @@ namespace DnD.Shared.Models
     {
         [JsonPropertyName("url")]
         public string Url { get; set; }
+        [JsonPropertyName("path")]
+        public string Path { get; set; }
         [JsonPropertyName("width")]
         public int Width { get; set; }
         [JsonPropertyName("height")]

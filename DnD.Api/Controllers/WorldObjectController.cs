@@ -112,7 +112,8 @@ namespace DnD.Api.Controllers
                                     {
                                         Url = imageUrl,
                                         Width = width,
-                                        Height = height
+                                        Height = height,
+                                        Path = prop.Value
                                     };
 
                                     responseImage.Images.Add(imageInfo);

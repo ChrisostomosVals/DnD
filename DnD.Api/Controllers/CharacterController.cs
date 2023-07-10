@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
+using System.IO;
 
 namespace DnD.Api.Controllers
 {
@@ -54,7 +55,7 @@ namespace DnD.Api.Controllers
                     _ => await _characterRepository.GetAsync(cancellationToken),
                 };
                 var response = _mapper.Map<IEnumerable<CharacterModel>>(responseRepo);
-                if(!User.IsInRole("GAME MASTER"))
+                if (!User.IsInRole("GAME MASTER"))
                 {
                     response = response.Where(r => r.Visible == true);
                     foreach (var character in response.ToList())
@@ -339,7 +340,8 @@ namespace DnD.Api.Controllers
                                     {
                                         Url = imageUrl,
                                         Width = width,
-                                        Height = height
+                                        Height = height,
+                                        Path = prop.Value
                                     };
 
                                     responseImage.Images.Add(imageInfo);
@@ -362,7 +364,7 @@ namespace DnD.Api.Controllers
             try
             {
                 var race = await _raceRepository.GetByIdAsync(request.RaceId, cancellationToken);
-                if(race is null) return NotFound(ErrorResponseModel.NewError("character/create", "race not found"));
+                if (race is null) return NotFound(ErrorResponseModel.NewError("character/create", "race not found"));
                 List<StatModel> stats = request.Type switch
                 {
                     "HERO" => _configuration.GetSection("Hero").GetSection("Stats").Get<List<StatModel>>(),
@@ -399,7 +401,7 @@ namespace DnD.Api.Controllers
                     Properties = new List<PropertyModel>(),
                     Visible = request.Visible,
                 };
-               
+
                 var newCharacterMapped = _mapper.Map<CharacterBson>(newCharacter);
                 await _characterRepository.CreateAsync(newCharacterMapped, cancellationToken);
                 return Ok();
@@ -450,13 +452,13 @@ namespace DnD.Api.Controllers
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
                     if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-gear", "You do not have permission for this action"));
                 }
-                if(findCharacter.Gear is not null)
+                if (findCharacter.Gear is not null)
                 {
                     foreach (var item in request.UpdateDefinition)
                     {
                         var findItem = findCharacter.Gear.FirstOrDefault(g => g.Name == item.Name || g.Id == item.Id);
                         if (findItem is null)
-                        { 
+                        {
                             item.Id ??= Guid.NewGuid().ToString();
                         }
                         else
@@ -465,7 +467,7 @@ namespace DnD.Api.Controllers
                         }
                     }
                 }
-                
+
                 var newGearMapped = _mapper.Map<IList<GearBson>>(request.UpdateDefinition);
                 await _characterRepository.UpdateGearAsync(request.Id, newGearMapped, cancellationToken);
                 return Ok();
@@ -489,13 +491,13 @@ namespace DnD.Api.Controllers
                 }
                 if (!findCharacter.Gear.IsNullOrEmpty())
                 {
-                   var findMoney = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
-                   var checkMoney = findCharacter.Gear!.FirstOrDefault(g => g.Name == "Money");
-                   if(findMoney is not null)
+                    var findMoney = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
+                    var checkMoney = findCharacter.Gear!.FirstOrDefault(g => g.Name == "Money");
+                    if (findMoney is not null)
                     {
                         findCharacter.Gear!.FirstOrDefault(g => g.Id == findMoney.Id)!.Quantity += request.Quantity;
                     }
-                   else if (checkMoney is not null)
+                    else if (checkMoney is not null)
                     {
                         findCharacter.Gear!.FirstOrDefault(g => g.Name == "Money")!.Quantity += request.Quantity;
                     }
@@ -544,7 +546,7 @@ namespace DnD.Api.Controllers
                 }
                 if (findCharacter.Gear.IsNullOrEmpty()) return NotFound(ErrorResponseModel.NewError("character/money-remove", "no gear found"));
                 var findMoney = await _characterRepository.GetGearItemAsync(request.Id, request.GearId, cancellationToken);
-                if(findMoney is null) return NotFound(ErrorResponseModel.NewError("character/money-remove", "no money found"));
+                if (findMoney is null) return NotFound(ErrorResponseModel.NewError("character/money-remove", "no money found"));
                 if (findMoney.Quantity < request.Quantity) return BadRequest(ErrorResponseModel.NewError("character/update-gear", "not enough money"));
                 findCharacter.Gear!.FirstOrDefault(g => g.Id == findMoney.Id)!.Quantity -= request.Quantity;
                 await _characterRepository.UpdateGearAsync(request.Id, findCharacter.Gear!, cancellationToken);
@@ -780,6 +782,83 @@ namespace DnD.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("character/update-properties", ex));
+            }
+        }
+        [HttpPost("image")]
+        public async Task<IActionResult> UploadImage([FromForm] UploadImageRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/update-properties", "character not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-properties", "You do not have permission for this action"));
+                }
+                var filePath = _configuration.GetSection("FilePaths").GetValue<string>("Images");
+                string newFullPath = "";
+                int count = 1;
+                var checkPath = Path.Combine(filePath, "character", findCharacter.Name);
+                if (!Directory.Exists(checkPath)) Directory.CreateDirectory(checkPath);
+                string savePath = Path.Combine(filePath, "character", findCharacter.Name, request.File.FileName);
+                string fileNameOnly = Path.GetFileNameWithoutExtension(savePath);
+                string extension = Path.GetExtension(savePath);
+                string path = Path.GetDirectoryName(savePath)!;
+                newFullPath = savePath;
+                while (System.IO.File.Exists(newFullPath))
+                {
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count++);
+                    newFullPath = Path.Combine(path, tempFileName + extension);
+                }
+                using var stream = new FileStream(newFullPath, FileMode.Create);
+                await request.File.CopyToAsync(stream);
+                var properties = findCharacter.Properties;
+                if (properties is null) properties = new List<PropertyBson>();
+                properties.Add(new PropertyBson
+                {
+                    Type = "Image",
+                    Value = newFullPath
+                });
+                await _characterRepository.UpdatePropertiesAsync(findCharacter.Id!, properties);
+                return Ok(new { path = newFullPath });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("media-upload", ex));
+            }
+        }
+        [HttpDelete("images")]
+        public async Task<IActionResult> DeleteImages(DeleteImagesRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/update-properties", "character not found"));
+                if (!User.IsInRole("GAME MASTER"))
+                {
+                    var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-properties", "You do not have permission for this action"));
+                }
+                List<string> propertiesToDelete = new List<string>();
+                foreach (var path in request.Paths)
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                        propertiesToDelete.Add(path);
+                    }
+                }
+                if(findCharacter.Properties is not null)
+                {
+                    findCharacter.Properties = findCharacter.Properties.Where(prop => !propertiesToDelete.Contains(prop.Value)).ToList();
+                }
+                await _characterRepository.UpdatePropertiesAsync(findCharacter.Id!, findCharacter.Properties!, cancellationToken);
+                return Ok(new { paths = propertiesToDelete });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("media-upload", ex));
             }
         }
         [Authorize(Roles = "GAME MASTER")]
