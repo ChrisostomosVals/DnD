@@ -23,7 +23,12 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseAuthorization();
-
+app.UseCors(config =>
+{
+    config.AllowAnyOrigin();
+    config.AllowAnyHeader();
+    config.AllowAnyMethod();
+});
 app.MapControllers();
 app.UseOcelot().Wait();
 app.Run();

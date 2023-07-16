@@ -1,17 +1,15 @@
-
-
-
-
 import ApiResponseModel from "../models/ApiResponseModel";
 import ErrorResponseModel from "../models/ErrorResponseModel";
+import LoginErrorModel from "../models/LoginErrorModel";
+import LoginResponseModel from "../models/LoginResponseModel";
 import TokenModel from "../models/TokenModel";
 import HttpClient from "../utils/httpService";
 
 
 export default class ConnectApi{
-    public static async LoginAsync(email:string, password: string, url: string) : Promise<ApiResponseModel<TokenModel>> {
+    public static async LoginAsync(email:string, password: string, url: string) : Promise<LoginResponseModel<TokenModel>> {
         try {
-            const details = {
+            const details: any = {
                 username: email,
                 password: password,
                 grant_type: "password",
@@ -35,17 +33,17 @@ export default class ConnectApi{
               if(response.ok){
                 const data = await response.json();
                 if(data === null){
-                    return new ApiResponseModel<TokenModel>(data, ErrorResponseModel.NewErrorMsg("content-null", "The response body was empty"));
+                    return new LoginResponseModel<TokenModel>(data, LoginErrorModel.NewErrorMsg("content-null", "The response body was empty"));
                 }
-                return new ApiResponseModel<TokenModel>(data, null);
+                return new LoginResponseModel<TokenModel>(data, null);
               } 
-              else if(response.status == 400 || response.status == 404){
-                const errorMsg = await response.json();
-                const error = response.statusText;
-                return new ApiResponseModel<TokenModel>(null, ErrorResponseModel.NewErrorMsg(error, errorMsg));
+              else if(response.status === 400 || response.status === 404){
+                const errorMsg:  LoginErrorModel = await response.json();
+                return new LoginResponseModel<TokenModel>(null, LoginErrorModel.NewError(errorMsg));
             }
-        } catch (error) {
-            return new ApiResponseModel<TokenModel>(null, ErrorResponseModel.NewError("ConnectApi.LoginAsync().Exception", error));;
+            throw new Error('Something went wrong');
+          } catch (error: any) {
+            return new LoginResponseModel<TokenModel>(null, LoginErrorModel.NewErrorExc("ConnectApi.LoginAsync().Exception", error));
         }
     }
     public static async UserInfo(token: string, url: string): Promise<ApiResponseModel<any>>{
@@ -67,7 +65,8 @@ export default class ConnectApi{
             const error = response.statusText;
             return new ApiResponseModel<any>(null, ErrorResponseModel.NewErrorMsg(error, "Unauthorized access"));
         }
-      } catch (error) {
+        throw new Error('Something went wrong');
+      } catch (error: any) {
           return new ApiResponseModel<any>(null, ErrorResponseModel.NewError("ConnectApi.UserInfo().Exception", error));;
       }
     }

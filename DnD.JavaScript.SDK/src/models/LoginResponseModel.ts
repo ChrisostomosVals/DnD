@@ -1,10 +1,10 @@
-import ErrorResponseModel from './ErrorResponseModel'
+import LoginErrorModel from "./LoginErrorModel";
 
-export default class ApiResponseModel<T> {
+export default class LoginResponseModel<T> {
     public data!: T | null;
-    public error!: ErrorResponseModel | null;
+    public error!: LoginErrorModel | null;
     public isError: boolean;
-    constructor(data:T | null, error: ErrorResponseModel | null){
+    constructor(data:T | null, error: LoginErrorModel | null){
         this.isError = error !== null;
         if(this.isError){
             this.setError(error);
@@ -17,7 +17,7 @@ export default class ApiResponseModel<T> {
         this.data = params
     }
 
-    private setError(params: ErrorResponseModel | null){
+    private setError(params: LoginErrorModel | null){
         this.error = params
     }
 }
