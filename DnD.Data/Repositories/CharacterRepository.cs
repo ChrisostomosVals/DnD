@@ -146,6 +146,7 @@ namespace DnD.Data.Repositories
                 .Set(c => c.Name, character.Name)
                 .Set(c => c.RaceId, character.RaceId)
                 .Set(c => c.ClassId, character.ClassId)
+                .Set(c => c.Visible, character.Visible)
                 .Set(c => c.Type, character.Type);
             await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
         }

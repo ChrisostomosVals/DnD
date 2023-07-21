@@ -11,5 +11,6 @@ namespace DnD.Shared.Models
         public string Type { get; set; }
         public string ClassId { get; set; }
         public string RaceId { get; set; }
+        public bool Visible { get; set; }
     }
 }

@@ -18,6 +18,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using System.IO;
+using MongoDB.Driver.Linq;
 
 namespace DnD.Api.Controllers
 {
@@ -430,6 +431,7 @@ namespace DnD.Api.Controllers
                     ClassId = request.ClassId,
                     Type = request.Type,
                     RaceId = request.RaceId,
+                    Visible = request.Visible,
                 };
                 var newCharacterMapped = _mapper.Map<CharacterBson>(newCharacter);
                 await _characterRepository.UpdateAsync(newCharacterMapped, cancellationToken);
@@ -761,6 +763,35 @@ namespace DnD.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("character/update-stats", ex));
+            }
+        }
+        [HttpPatch("stats")]
+        [Authorize(Roles = "GAME MASTER")]
+        public async Task<IActionResult> AddStats(UpdateCharacterDefinitionRequestModel<StatModel> request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/add-stats", "character not found"));
+                if (findCharacter.Stats is null)
+                    findCharacter.Stats = new List<StatBson>();
+                var stats = findCharacter.Stats;
+                foreach (var stat in request.UpdateDefinition)
+                {
+                    if (stats.ToList().Find(st => st.Name == stat.Name) is null)
+                        stats.Add(new StatBson
+                        {
+                            Name = stat.Name,
+                            Value = stat.Value,
+                            Shown = stat.Shown,
+                        });
+                }
+                await _characterRepository.UpdateStatsAsync(request.Id, stats, cancellationToken);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("character/add-stats", ex));
             }
         }
         [HttpPut("properties")]
