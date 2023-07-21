@@ -19,6 +19,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using System.IO;
 using MongoDB.Driver.Linq;
+using static DnD.Data.Internal.Procedures;
 
 namespace DnD.Api.Controllers
 {
@@ -63,6 +64,11 @@ namespace DnD.Api.Controllers
                     {
                         if (character.Stats is null) continue;
                         character.Stats = character.Stats.Where(stat => stat.Shown == true).ToList();
+                        character.Arsenal = new List<ArsenalModel>();
+                        character.Skills = new List<SkillModel>();
+                        character.Feats = new List<string>();
+                        character.SpecialAbilities = new List<string>();
+                        character.Gear = new List<GearModel>();
                     }
                 }
                 response = response.OrderBy(character => character.Type != "HERO").ThenBy(character => character.Type);
@@ -87,6 +93,11 @@ namespace DnD.Api.Controllers
                     if (user.CharacterId != id && response.Stats is not null)
                     {
                         response.Stats = response.Stats.Where(stat => stat.Shown == true).ToList();
+                        response.Arsenal = new List<ArsenalModel>();
+                        response.Skills = new List<SkillModel>();
+                        response.Feats = new List<string>();
+                        response.SpecialAbilities = new List<string>();
+                        response.Gear = new List<GearModel>();
                     }
                 }
                 return Ok(response);
