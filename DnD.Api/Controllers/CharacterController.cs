@@ -56,19 +56,22 @@ namespace DnD.Api.Controllers
                     "boss" => await _characterRepository.GetBossAsync(cancellationToken),
                     _ => await _characterRepository.GetAsync(cancellationToken),
                 };
+                var user = User.GetSubjectId();
+                var findUser = await _userRepository.GetByIdAsync(user, cancellationToken);
                 var response = _mapper.Map<IEnumerable<CharacterModel>>(responseRepo);
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     response = response.Where(r => r.Visible == true);
                     foreach (var character in response.ToList())
                     {
-                        if (character.Stats is null) continue;
-                        character.Stats = character.Stats.Where(stat => stat.Shown == true).ToList();
+                        if (findUser.CharacterId == character.Id) continue;
                         character.Arsenal = new List<ArsenalModel>();
                         character.Skills = new List<SkillModel>();
                         character.Feats = new List<string>();
                         character.SpecialAbilities = new List<string>();
                         character.Gear = new List<GearModel>();
+                        if (character.Stats is null) character.Stats = new List<StatModel>();
+                        else character.Stats = character.Stats.Where(stat => stat.Shown == true).ToList();
                     }
                 }
                 response = response.OrderBy(character => character.Type != "HERO").ThenBy(character => character.Type);
@@ -90,9 +93,10 @@ namespace DnD.Api.Controllers
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (user.CharacterId != id && response.Stats is not null)
+                    if (user.CharacterId != id)
                     {
-                        response.Stats = response.Stats.Where(stat => stat.Shown == true).ToList();
+                        if (response.Stats is null) response.Stats = new List<StatModel>();
+                        else response.Stats = response.Stats.Where(stat => stat.Shown == true).ToList();
                         response.Arsenal = new List<ArsenalModel>();
                         response.Skills = new List<SkillModel>();
                         response.Feats = new List<string>();
