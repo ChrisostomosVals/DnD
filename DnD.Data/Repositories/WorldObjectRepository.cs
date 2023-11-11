@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static DnD.Data.Internal.Procedures;
 
 namespace DnD.Data.Repositories
 {
@@ -55,6 +54,14 @@ namespace DnD.Data.Repositories
                 .Set(c => c.Type, worldObject.Type)
                 .Set(c => c.Description, worldObject.Description)
                 .Set(c => c.Properties, worldObject.Properties);
+            await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        }
+        public async Task UpdatePropertiesAsync(string id, IList<WorldObjectPropBson >properties, CancellationToken cancellationToken = default)
+        {
+            var characters = _connection.Database.GetCollection<WorldObjectBson>("world_objects");
+            var filter = new FilterDefinitionBuilder<WorldObjectBson>().Eq(c => c.Id, id);
+            var updateDefinition = new UpdateDefinitionBuilder<WorldObjectBson>()
+                .Set(c => c.Properties, properties);
             await characters.UpdateOneAsync(filter, updateDefinition, cancellationToken: cancellationToken);
         }
         public async Task DeleteAsync(string id, CancellationToken cancellationToken = default)

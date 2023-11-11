@@ -19,7 +19,6 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using System.IO;
 using MongoDB.Driver.Linq;
-using static DnD.Data.Internal.Procedures;
 
 namespace DnD.Api.Controllers
 {
@@ -836,11 +835,11 @@ namespace DnD.Api.Controllers
             try
             {
                 var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/update-properties", "character not found"));
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/upload-image", "character not found"));
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-properties", "You do not have permission for this action"));
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/upload-image", "You do not have permission for this action"));
                 }
                 var filePath = _configuration.GetSection("FilePaths").GetValue<string>("Images");
                 string newFullPath = "";
@@ -871,7 +870,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ErrorResponseModel.NewError("media-upload", ex));
+                return BadRequest(ErrorResponseModel.NewError("character/upload-image", ex));
             }
         }
         [HttpDelete("images")]
@@ -880,11 +879,11 @@ namespace DnD.Api.Controllers
             try
             {
                 var findCharacter = await _characterRepository.GetByIdAsync(request.Id, cancellationToken);
-                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/update-properties", "character not found"));
+                if (findCharacter is null) return NotFound(ErrorResponseModel.NewError("character/delete-images", "character not found"));
                 if (!User.IsInRole("GAME MASTER"))
                 {
                     var user = await _userRepository.GetByIdAsync(User.GetSubjectId(), cancellationToken);
-                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/update-properties", "You do not have permission for this action"));
+                    if (request.Id != user.CharacterId) return Unauthorized(ErrorResponseModel.NewError("character/delete-images", "You do not have permission for this action"));
                 }
                 List<string> propertiesToDelete = new List<string>();
                 foreach (var path in request.Paths)
@@ -904,7 +903,7 @@ namespace DnD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ErrorResponseModel.NewError("media-upload", ex));
+                return BadRequest(ErrorResponseModel.NewError("character/delete-images", ex));
             }
         }
         [Authorize(Roles = "GAME MASTER")]

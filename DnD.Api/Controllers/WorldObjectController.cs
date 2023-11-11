@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DnD.Api.CustomAttributes;
+using DnD.Api.Extensions;
 using DnD.Data.Models;
 using DnD.Data.Repositories;
 using DnD.Shared.Models;
@@ -21,11 +22,13 @@ namespace DnD.Api.Controllers
         private readonly WorldObjectRepository _worldObjectRepository;
         private readonly ILogger<WorldObjectController> _logger;
         private readonly IMapper _mapper;
-        public WorldObjectController(WorldObjectRepository worldObjectRepository, ILogger<WorldObjectController> logger, IMapper mapper)
+        private readonly IConfiguration _configuration;
+        public WorldObjectController(WorldObjectRepository worldObjectRepository, ILogger<WorldObjectController> logger, IMapper mapper, IConfiguration configuration)
         {
             _worldObjectRepository = worldObjectRepository;
             _logger = logger;
             _mapper = mapper;
+            _configuration = configuration;
         }
         [HttpGet]
         public async Task<IActionResult> Get(CancellationToken cancellationToken)
@@ -173,6 +176,73 @@ namespace DnD.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ErrorResponseModel.NewError("world-object/update", ex));
+            }
+        }
+        [HttpPost("image")]
+        public async Task<IActionResult> UploadImage([FromForm] UploadImageRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var worldObject = await _worldObjectRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (worldObject is null) return NotFound(ErrorResponseModel.NewError("world-object/upload-image", "world-object not found"));
+                var filePath = _configuration.GetSection("FilePaths").GetValue<string>("Images");
+                string newFullPath = "";
+                int count = 1;
+                var checkPath = Path.Combine(filePath, "world-object", worldObject.Name);
+                if (!Directory.Exists(checkPath)) Directory.CreateDirectory(checkPath);
+                string savePath = Path.Combine(filePath, "world-object", worldObject.Name, request.File.FileName);
+                string fileNameOnly = Path.GetFileNameWithoutExtension(savePath);
+                string extension = Path.GetExtension(savePath);
+                string path = Path.GetDirectoryName(savePath)!;
+                newFullPath = savePath;
+                while (System.IO.File.Exists(newFullPath))
+                {
+                    string tempFileName = string.Format("{0}({1})", fileNameOnly, count++);
+                    newFullPath = Path.Combine(path, tempFileName + extension);
+                }
+                using var stream = new FileStream(newFullPath, FileMode.Create);
+                await request.File.CopyToAsync(stream);
+                var properties = worldObject.Properties;
+                if (properties is null) properties = new List<WorldObjectPropBson>();
+                properties.Add(new WorldObjectPropBson
+                {
+                    Name = "image",
+                    Value = newFullPath
+                });
+                await _worldObjectRepository.UpdatePropertiesAsync(worldObject.Id!, properties);
+                return Ok(new { path = newFullPath });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("world-object/upload-image", ex));
+            }
+        }
+        [HttpDelete("images")]
+        public async Task<IActionResult> DeleteImages(DeleteImagesRequestModel request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var worldObject = await _worldObjectRepository.GetByIdAsync(request.Id, cancellationToken);
+                if (worldObject is null) return NotFound(ErrorResponseModel.NewError("world-object/delete-images", "world-object not found"));
+                List<string> propertiesToDelete = new List<string>();
+                foreach (var path in request.Paths)
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                        propertiesToDelete.Add(path);
+                    }
+                }
+                if (worldObject.Properties is not null)
+                {
+                    worldObject.Properties = worldObject.Properties.Where(prop => !propertiesToDelete.Contains(prop.Value)).ToList();
+                }
+                await _worldObjectRepository.UpdatePropertiesAsync(worldObject.Id!, worldObject.Properties!, cancellationToken);
+                return Ok(new { paths = propertiesToDelete });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponseModel.NewError("world-object/delete-images", ex));
             }
         }
         [HttpDelete("{id}/delete")]

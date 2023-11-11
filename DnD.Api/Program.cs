@@ -1,4 +1,5 @@
 using DataAdapter.NoSql;
+using DnD.Api.Extensions;
 using DnD.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -15,22 +16,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
-var connection = new MongoDbConnection(builder.Configuration.GetConnectionString("Connectionstring"));
-connection.UseDatabase(builder.Configuration.GetValue<string>("Database"));
-builder.Services.AddSingleton<IMongoDbConnection>(connection);
-builder.Services.AddTransient<CharacterRepository>();
-builder.Services.AddTransient<ChapterRepository>();
-builder.Services.AddTransient<ClassCategoryRepository>();
-builder.Services.AddTransient<ClassRepository>();
-builder.Services.AddTransient<WorldObjectRepository>();
-builder.Services.AddTransient<LocationRepository>();
-builder.Services.AddTransient<RaceRepository>();
-builder.Services.AddTransient<RaceCategoryRepository>();
-builder.Services.AddTransient<UserRepository>();
-builder.Services.AddTransient<UserRoleRepository>();
-
-
-
+builder.Services.AddRepositories(settings =>
+{
+    settings.MongoConnectionString = builder.Configuration.GetConnectionString("Connectionstring");
+    settings.MongoDatabase = builder.Configuration.GetValue<string>("Database");
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
     {
@@ -74,20 +64,17 @@ builder.Services.AddSwaggerGen(options =>
     });
     
 });
-
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5270);
 });
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 //app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

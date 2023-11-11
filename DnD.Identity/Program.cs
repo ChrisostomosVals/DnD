@@ -13,6 +13,7 @@ builder.Services.AddSingleton<IMongoDbConnection>(connection);
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<UserRoleRepository>();
 builder.Services.AddControllers();
+builder.Services.AddCors();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddIdentityServer()
@@ -32,7 +33,12 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseIdentityServer();
 app.UseAuthorization();
-
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyHeader();
+    options.AllowAnyMethod();
+});
 app.MapControllers();
 
 app.Run();
