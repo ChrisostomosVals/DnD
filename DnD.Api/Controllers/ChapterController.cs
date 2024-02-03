@@ -41,9 +41,9 @@ namespace DnD.Api.Controllers
         {
             try
             {
-                var responseRepo = await _chapterRepository.GetByIdAsync(id, cancellationToken);
-                if (responseRepo is null) return NotFound(ErrorResponseModel.NewError("chapter/get-one", "chapter not found"));
-                var response = _mapper.Map<ChapterModel>(responseRepo);
+                var chapter = await _chapterRepository.GetByIdAsync(id, cancellationToken);
+                if (chapter is null) return NotFound(ErrorResponseModel.NewError("chapter/get-one", "chapter not found"));
+                var response = _mapper.Map<ChapterModel>(chapter);
                 return Ok(response);
             }
             catch (Exception ex)
